@@ -404,7 +404,7 @@ limit | uint | Максимальное количество кортежей д
 	- `selectorTo` должен находиться на направлении поиска `selectorFrom`. Иначе выборка завершится на границе спейса не достигнув указанной границы поиска.
 
 ```c++
-QVariant data = tnt.getData("sensors", Selector{"temperature", ">", 25}, Selector{"temperature", "<", 30}, 50);
+QVariant data;
 
 // All data of Space "Tester". 
 // Here the "Tester" space has a primary index named "primary":

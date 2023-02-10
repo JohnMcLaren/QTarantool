@@ -403,7 +403,7 @@ The method returns a list of tuples by selection conditions specified by `select
 	- The `selectorTo` must be on the search direction `selectorFrom`. Otherwise the selection will end at the Space boundary before reaching the specified search boundary.
 
 ```c++
-QVariant data = tnt.getData("sensors", Selector{"temperature", ">", 25}, Selector{"temperature", "<", 30}, 50);
+QVariant data;
 
 // All data of Space "Tester". 
 // Here the "Tester" space has a primary index named "primary":
