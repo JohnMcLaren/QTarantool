@@ -93,9 +93,9 @@ return | QVariantMap | Information on memory usage by the server. [Read more...]
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
-										{"slab::info", tnt.slab(SLAB::INFO)},
-										{"slab::detail", tnt.slab(SLAB::DETAIL)},
-										{"slab::runtime", tnt.slab(SLAB::RUNTIME)}})
+						{"slab::info", tnt.slab(SLAB::INFO)},
+						{"slab::detail", tnt.slab(SLAB::DETAIL)},
+						{"slab::runtime", tnt.slab(SLAB::RUNTIME)}})
 							.toJson(QJsonDocument::Indented)
 							.data());
 ```
@@ -108,8 +108,8 @@ qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
 
 ```c++
 	qDebug("%s", QJsonDocument::fromVariant(tnt.info())
-								.toJson(QJsonDocument::Indented)
-								.data());
+			.toJson(QJsonDocument::Indented)
+			.data());
 ```
 
 *   **stat**(const STAT type)
@@ -123,11 +123,11 @@ return | QVariantMap | Statistics on server network usage and requests. [Read mo
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
-										{"stat::requests", tnt.stat(STAT::REQUESTS)},
-										{"stat::network", tnt.stat(STAT::NETWORK)},
-										{"stat::vinyl", tnt.stat(STAT::VINYL)}})
-							.toJson(QJsonDocument::Indented)
-							.data());
+					{"stat::requests", tnt.stat(STAT::REQUESTS)},
+					{"stat::network", tnt.stat(STAT::NETWORK)},
+					{"stat::vinyl", tnt.stat(STAT::VINYL)}})
+				.toJson(QJsonDocument::Indented)
+				.data());
 ```
 
 *   **getServerDirectory**()
