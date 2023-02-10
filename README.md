@@ -953,5 +953,5 @@ You can find test Qt-projects for `QTarantool` in the [Demo][demo-url] directory
 [tg-icon]: https://web.telegram.org/z/favicon.svg
 [tg-url]: https://t.me/tarantool
 [tg-ru-url]: https://t.me/tarantoolru
-[demo-url]: https://github.com/JohnMcLaren/QTarantool/Demo
-[demo-viewer-url]: https://github.com/JohnMcLaren/QTarantool/Demo/TNT-Viewer
+[demo-url]: https://github.com/JohnMcLaren/QTarantool/tree/main/Demo
+[demo-viewer-url]: https://github.com/JohnMcLaren/QTarantool/tree/main/Demo/TNT-Viewer
