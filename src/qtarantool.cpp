@@ -268,7 +268,7 @@ QTarantool::grantUserByRole(const QString &userName, const QString &userRole)
 bool
 QTarantool::deleteUser(const QString &userName)
 {
-	return(exec("box.schema.user.drop(...)", {userName, Map {{"if_exists", false}}}).IsValid); // equ Lua: box.schema.user.drop(userName, {if_exists =true})
+	return(exec("box.schema.user.drop(...)", {userName, Map {{"if_exists", false}}}).IsValid);
 }
 /****************************************************************************************
  *
