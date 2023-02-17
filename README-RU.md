@@ -6,7 +6,8 @@
 можно использовать для просмотра и некоторых изменений данных **существующей** базы `Tarantool`.
 
 ## Tarantool
-##### ![tg-icon] [EN][tg-url] [RU][tg-ru-url] --- [# Sources][tarantool-src] --- [# Documentation][tarantool-doc] --- [# Releases][tarantool-release]
+| ![tg-icon] [EN][tg-url] [RU][tg-ru-url] | [# Sources][tarantool-src] | [# Documentation][tarantool-doc] | [# Releases][tarantool-release] |
+|-|-|-|-|
 
 `Tarantool` - сервер приложений `Lua`, включающий в себя резидентную `NoSQL` базу данных,
 которая отличается высокой скоростью работы по сравнению с традиционными СУБД, обладая теми же свойствами: 
@@ -14,7 +15,8 @@
 [подробнее..][tarantool-doc-ov-ru]
 
 ## QTarantool API
-> [Server](#server) [User](#user) [Space](#space) [Index](#index) [Service](#service) [+++](#add)
+| [Server](#server) | [User](#user) | [Space](#space) | [Index](#index) | [Service](#service) | [+++](#add) |
+|-|-|-|-|-|-|
 
 Все методы коннектора блокирующие. 
 Управление будет возвращено в случае получения ответа сервера (с любым статусом) либо по таймауту.
@@ -27,7 +29,8 @@
 || тип | значение |
 |-|-|-|
 возвращает | bool | Текущее состояние соединения с сервером |
-uri | QString | Строка `URI` сервера в формате: `protocol://location:port`
+uri | QString | Строка `URI` сервера в формате: `protocol://location:port` |
+
 Устанавливает соединение с `Tarantool` сервером. Также генерируется сигнал `signalConnected( bool )`. Если на момент вызова метода имелось установленное соединение сервером, то оно будет разорвано.
 
 ```c++
@@ -57,7 +60,7 @@ qDebug() << tnt.disconnectServer();
 ```c++
 if(tnt.isConnected())
 {
-	// TODO
+    // TODO
 }
 ```
 
@@ -79,8 +82,8 @@ qDebug("server ping: %lld nS", tnt.ping());
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.cfg())
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **slab**(const SLAB type)
@@ -88,17 +91,17 @@ qDebug("%s", QJsonDocument::fromVariant(tnt.cfg())
 || тип | значение |
 |-|-|-|
 возвращает | QVariantMap | Информация по использованию памяти сервером. [Подробнее..][slab-url] |
-`type` | `SLAB::INFO` | Показать агрегированный отчет об использовании памяти |
-|| `SLAB::DETAIL` | Показать подробный отчет об использовании памяти |
-|| `SLAB::RUNTIME` | Показать отчет об использовании памяти для среды выполнения Lua |
+type | SLAB::INFO | Показать агрегированный отчет об использовании памяти |
+|| SLAB::DETAIL | Показать подробный отчет об использовании памяти |
+|| SLAB::RUNTIME | Показать отчет об использовании памяти для среды выполнения Lua |
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
-										{"slab::info", tnt.slab(SLAB::INFO)},
-										{"slab::detail", tnt.slab(SLAB::DETAIL)},
-										{"slab::runtime", tnt.slab(SLAB::RUNTIME)}})
-							.toJson(QJsonDocument::Indented)
-							.data());
+                                        {"slab::info", tnt.slab(SLAB::INFO)},
+                                        {"slab::detail", tnt.slab(SLAB::DETAIL)},
+                                        {"slab::runtime", tnt.slab(SLAB::RUNTIME)}})
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **info**()
@@ -108,9 +111,9 @@ qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
 |возвращает | QVariantMap | Вся информация о состоянии сервера возвращаемая модулем [`box.info`][box-info-url] |
 
 ```c++
-	qDebug("%s", QJsonDocument::fromVariant(tnt.info())
-								.toJson(QJsonDocument::Indented)
-								.data());
+qDebug("%s", QJsonDocument::fromVariant(tnt.info())
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **stat**(const STAT type)
@@ -118,17 +121,17 @@ qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
 ||тип|значение|
 |-|-|-|
 возвращает | QVariantMap | Различная статистическая информация по использованию сервером сети и запросам. [Подробнее..][stat-url]|
-`type` | STAT::REQUESTS | Показывает общее количество запросов с момента запуска и среднее количество запросов в секунду |
+type | STAT::REQUESTS | Показывает общее количество запросов с момента запуска и среднее количество запросов в секунду |
 || STAT::NETWORK | Показывает статистику по сетевым запросам |
 || STAT::VINYL | Показывает активность Vinyl-движка | 
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
-										{"stat::requests", tnt.stat(STAT::REQUESTS)},
-										{"stat::network", tnt.stat(STAT::NETWORK)},
-										{"stat::vinyl", tnt.stat(STAT::VINYL)}})
-							.toJson(QJsonDocument::Indented)
-							.data());
+                                        {"stat::requests", tnt.stat(STAT::REQUESTS)},
+                                        {"stat::network", tnt.stat(STAT::NETWORK)},
+                                        {"stat::vinyl", tnt.stat(STAT::VINYL)}})
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **getServerDirectory**()
@@ -161,9 +164,9 @@ password | QString | Пароль пользователя |
 
 ```c++
 if(tnt.login("Alice", "alice-password"))
-	qDebug("Auth Success!");
+    qDebug("Auth Success!");
 else
-	qDebug("Auth Failed.");
+    qDebug("Auth Failed.");
 ```
 
 *  **logout**()
@@ -171,6 +174,7 @@ else
 || тип | значение |
 |-|-|-|
 возвращает | bool | Результат аутентификации как пользователя `guest`|
+
 Завершение сессии текущего пользователя и вход как `guest`.
 
 ```c++
@@ -194,8 +198,8 @@ qDebug() << tnt.getUserName();
 || тип | значение | примечание |
 |-|-|-|-|
 возвращает | bool | Результат создания нового пользователя |Теущий пользователь должен иметь право `create` на создание новых пользователей. Пароль пользователя обязателен и не может быть пустым. |
-userName | const QString & | Имя нового пользователя | |
-userPassword | const QString & | Пароль нового пользователя | |
+userName | QString | Имя нового пользователя | |
+userPassword | QString | Пароль нового пользователя | |
 
 Метод создает нового пользователя с заданным паролем. Если пользователь уже существовал то метод завершится ошибкой и вернет `false`.
 
@@ -213,8 +217,8 @@ userPrivileges | QString | Строка перечисленных через з
 objectType | QString | Тип объекта на который распространяются предоставляемые права | Допустимые значения: <br> `'space'`, `'user'`, `'role'`, `'sequence'`, `'function'`, `'trigger'`, `'universe'` <br>(по умолчанию `'universe'`). <br>Значение кроме `null`/`nil` обязательно заключается в **одинарные** кавычки `'` |
 objectName | QString | Имя объекта | Произвольное <br>(по умолчанию `null`). <br>Обязательно заключается в **одинарные** кавычки `'` |
 
-[О правах пользователей подробней ..][grants-url]
-[Почему пользователь **не может** выполнять запросы типа **EVAL**, то есть - **все** этого коннектора ..][security-url]
+[О правах пользователей подробней ..][grants-url] <br> [Почему пользователь **не может** выполнять запросы типа **EVAL**, то есть - **все** этого коннектора ..][security-url]
+
 ```c++
 // full access to 'Test' space for user 'Bob'
 qDebug() << tnt.grantUser("Bob", "read,write,execute,create,drop", "'space'", "'Test'"); 
@@ -223,7 +227,7 @@ qDebug() << tnt.grantUser("Bob", "read,write,execute,create,drop", "'space'", "'
 *   **grantUserByRole**(const QString &userName, const QString &userRole)
 
 || тип | значение |
-|-|-|-|-|
+|-|-|-|
 возвращает | bool | `true` если пользователь получил новую роль |
 userName | QString | имя пользователя |
 userRole | QString | название **существующей** новой роли пользователя |
@@ -282,8 +286,8 @@ qDebug() << tnt.user();
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.users())
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **grants**(const QString &userName)
@@ -295,8 +299,8 @@ userName | QString | Имя пользователя |
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.grants("Alice"))
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 ---
  #### Space
@@ -313,8 +317,8 @@ options | QStringList | Список **строк** с опциями созда
 
 ```c++
 tnt.createSpace("Tester2", {"engine =memtx", 
-							"format ={{'field1'}, {'field2'}, {'field3'}}"
-							});
+                            "format ={{'field1'}, {'field2'}, {'field3'}}"
+                            });
 ```
 Возможные варианты опции [format..][format-url]
 
@@ -383,8 +387,8 @@ qDebug() << tnt.isSpaceExist("Tester");
 Метод возвращает список списков содержащих атрибуты всех существующих спейсов базы включая системные. Возвращаемые значения будут содержать только метаданные спейсов без хранящихся в них данных
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.spaces())
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **getData**(const QString &spaceName, const Selector &selectorFrom, const Selector &selectorTo, const uint limit)
@@ -399,33 +403,33 @@ limit | uint | Максимальное количество кортежей д
 
 Метод возвращает список кортежей по условиям выборки заданных селекторами `selectorFrom` `selectorTo`  и ограниченный количеством `limit`. Данным методом, не может быть выполнен поиск кортежей  по разным индексам. Будет применен индекс указанный в `selectorFrom` (по умолчанию =`primary`).
 
-> **Следует иметь в виду, что:**
-	- Селектора должны быть `разнонаправлены`
-	- `selectorTo` должен находиться на направлении поиска `selectorFrom`. Иначе выборка завершится на границе спейса не достигнув указанной границы поиска.
+> **Следует иметь в виду, что:** <br>
+    - Селектора должны быть `разнонаправлены` <br>
+    - `selectorTo` должен находиться на направлении поиска `selectorFrom`. Иначе выборка завершится на границе спейса не достигнув указанной границы поиска.
 
 ```c++
 QVariant data;
 
 // All data of Space "Tester". 
 // Here the "Tester" space has a primary index named "primary":
-	data =tnt.getData("Tester", {});
+    data =tnt.getData("Tester", {});
 
 // Data of Space "Tester" - with 'primary' index >= 100 And <= 300:
-	data =tnt.getData("Tester", {GE, {100}}, {LE, {300}});
+    data =tnt.getData("Tester", {GE, {100}}, {LE, {300}});
 // same data but in reverse sorting
-	data =tnt.getData("Tester", {LE, {300}}, {GE, {100}});
+    data =tnt.getData("Tester", {LE, {300}}, {GE, {100}});
 
-	qDebug("%s", QJsonDocument::fromVariant(data)
-								.toJson(QJsonDocument::Indented)
-								.data());
+    qDebug("%s", QJsonDocument::fromVariant(data)
+                                .toJson(QJsonDocument::Indented)
+                                .data());
 ```
 * * **Selector** - простая структура для указания граничных условий при выборке кортежей из спейса:
     ```c++
     struct Selector {
-		OPERATOR Operator;
-		IndexKey Key;
-		QString  IndexName;
-	};
+        OPERATOR Operator;
+        IndexKey Key;
+        QString  IndexName;
+    };
     ```
     где, 
     > `Operator` - перечисление возможных операторов сравнения:
@@ -440,39 +444,39 @@ QVariant data;
     | LT | Less-Than | < | Меньше (обратное направление) |
     | REQ | Reverse-EQual |  | То же что `EQ` но обратное направление поиска |
     
-    > `Key` - список значений `определенных типов` произвольной длины представляющих искомый ключ.
+    > `Key` - список значений `определенных типов` произвольной длины представляющих искомый ключ. <br>
     Допустимые типы значений в полях ключа:  `<любой числовой тип>`, `логический`, `строка`.
    
     `IndexKey` как наследник `QList` инициализируется списком инициализации значений полей создаваемого ключа или из строки представляющей его. Экземпляр объекта ключа может быть сериализован в текст методом экземпляра `text()`:
     ```c++
     IndexKey key {286, "test", "текст", -3.086};
-	IndexKey key2("{286, \"test\", \"текст\", -3.086}");
+    IndexKey key2("{286, \"test\", \"текст\", -3.086}");
 
-		qDebug() << key.text();
-		qDebug("%s", key.text().toUtf8().data());
+        qDebug() << key.text();
+        qDebug("%s", key.text().toUtf8().data());
 
-		qDebug() << key2.text();
-		qDebug("%s", key2.text().toUtf8().data());
-		// output
-		// "{286,\"test\",\"текст\",-3.086}"
-		// {286,"test","текст",-3.086}
+        qDebug() << key2.text();
+        qDebug("%s", key2.text().toUtf8().data());
+        // output
+        // "{286,\"test\",\"текст\",-3.086}"
+        // {286,"test","текст",-3.086}
     ```
     Примеры простых ключей по одному индексному полю кортежей:
-	```
-	{152}
-	{"test value"}
-	{3.14159265359}
-	```
+    ```
+    {152}
+    {"test value"}
+    {3.14159265359}
+    ```
     составные ключи для составных индексов:
     ```
     {333, 2.71828, "text", true}
     {29, 01, 2023}
     ```
-	составные ключи со сложной структурой -`'Иерархические'`, не поддерживаются `Tarantool`:
-	```
-	{500, {{{555, 666}, 666}, 777}, 888, {600, {700, {"800"}}}, 900}
-	```
-	> `IndexName` - имя индекса по которому будет вестись поиск. По умолчанию `primary`, но может быть любым `уникальным / не уникальным` индексом. Заключать имя индекса в одинарные кавычки не нужно. 
+    составные ключи со сложной структурой -`'Иерархические'`, не поддерживаются `Tarantool`:
+    ```
+    {500, {{{555, 666}, 666}, 777}, 888, {600, {700, {"800"}}}, 900}
+    ```
+    > `IndexName` - имя индекса по которому будет вестись поиск. По умолчанию `primary`, но может быть любым `уникальным / не уникальным` индексом. Заключать имя индекса в одинарные кавычки не нужно. 
 
 *   **getData**(const QString &spaceName, const IndexKey &key, const uint field, const QString &indexName)
 
@@ -562,15 +566,16 @@ spaceName | QString | Имя спейса |
 key | IndexKey | Ключ изменяемого кортежа в индексе `indexName` |
 actions | Actions | Список структур `Action` описывающих действия над полями кортежа |
 indexName | QString | Не обязательный. <br> Имя индекса, в котором производится поиск кортежа по указанному ключу `key`. | Любой уникальный индекс спейса. <br> По умолчанию используется первичный индекс |
+
 Этот метод как и предыдущий изменяет значения кортежа укзанного ключом `key`. Но в отличии от того метода позволяет выполнить не только **присваивание** но и любое **другое** доступное действие на одном или **нескольких** полях кортежа за один запрос.
 * * **Actions** - список структур `Action` - планируемых действий над полями кортежа.
-		Структура `Action` имеет вид:
+        Структура `Action` имеет вид:
     ```c++
     struct Action {
-		QString	 Action;
-		int      Field;
-		QVariant Value;
-	};
+        QString  Action;
+        int      Field;
+        QVariant Value;
+    };
     ```
     где,
     > **`Action`** - строка с символом доступного для поля действия (операции):
@@ -581,19 +586,20 @@ indexName | QString | Не обязательный. <br> Имя индекса,
     | `+` | `Plus` | `Field += Value` | Прибавить к значению поля `Value` |
     | `-` | `Minus` | `Field -= Value` | Вычесть из значения поля `Value` |
     | `&` | `AND` | `Field &= Value` | `Побитовое И` с `Value` |
-    | `|` | `OR` | `Field |= Value` | `Побитовое ИЛИ` с `Value` |
+    | `\|` | `OR` | `Field \|= Value` | `Побитовое ИЛИ` с `Value` |
     | `^` | `XOR` | `Field ^= Value` | `Побитовое исключающее ИЛИ` с `Value` |
-	Результат действия будет помещен в соответствующее поле кортежа как новое значение.
-	
-	> **Следует иметь в виду, что:**
-		1. Побитовые операции выполняются **только** над полями типа `unsigned`. Т.е. не применимы к `bool` (*странность `Tarantool`*). Если тип поля не определен явно форматом спейса, его можно изменить **присваиванием** значения нужного типа.
-		2. Не допускается более одного действия над одним и тем же полем в одной транзакции
-		3. Если при выполнении хотя бы одной операции из списка произойдет ошибка - ни одна операция в транзакции не будет применена
-	
-	> **`Field`** - Позиция изменяемого поля. 
-	Правила те же что и в [предыдущем](#changeData1) методе для аргумента `field`.
-	
-	> **`Value`** - Значение применяемое в операции с полем.
+    
+    Результат действия будет помещен в соответствующее поле кортежа как новое значение.
+    
+    > **Следует иметь в виду, что:** <br>
+        1. Побитовые операции выполняются **только** над полями типа `unsigned`. Т.е. не применимы к `bool` (*странность `Tarantool`*). Если тип поля не определен явно форматом спейса, его можно изменить **присваиванием** значения нужного типа. <br>
+        2. Не допускается более одного действия над одним и тем же полем в одной транзакции <br>
+        3. Если при выполнении хотя бы одной операции из списка произойдет ошибка - ни одна операция в транзакции не будет применена <br>
+    
+    > **`Field`** - Позиция изменяемого поля. 
+    Правила те же что и в [предыдущем](#changeData1) методе для аргумента `field`.
+    
+    > **`Value`** - Значение применяемое в операции с полем.
 
 Для демонстрации работы метода возьмем кортеж из [предыдущего](#test-tuple) примера и внесем изменения:
 ```c++
@@ -601,8 +607,8 @@ indexName | QString | Не обязательный. <br> Имя индекса,
 // * Subtract from <5> field value: 0.015
 // * Change <3> field from the end (before penultimate) to: "bob@mail.com"
 qDebug() << tnt.changeData("Tester", {115726}, {{"+", 4, 1}, 
-												{"-", 5, 0.015}, 
-												{"=", -3, "bob@mail.com"}});
+                                                {"-", 5, 0.015}, 
+                                                {"=", -3, "bob@mail.com"}});
 ```
 
 *   **getSpaceId**(const QString &spaceName)
@@ -670,101 +676,101 @@ parts | Parts | Список структур `Part` описывающих по
 options | QStringList | Опциональные параметры создаваемого индекса | Не обязательный. <br> Опция `'parts'` **не должна** здесь использоваться, поскольку передается списком `parts` выше. <br> [Допустимые опции](#createIndex-options)
 
 * * **parts** - список содержит структуры `Part` вида:
-	```c++
-	struct Part {
-		QVariant Field;
-		QString  Type;
-	}
-	```
-	где, 
-	> **Field** - беззнаковое целое число, позиция индексируемого поля в кортежах **или** строка содержащая имя поля если оно задано форматом спейса.
-	
-	> **Type** - строка с именем Lua-типа **значения** индексируемого поля. Типы полей которые могут быть включены в индекс: `unsigned`, `string`, `varbinary`, `integer`, `number`, `double`, `boolean`, `decimal`, `datetime`, `uuid`, `array`, `scalar`, `nil`. 
-	Заключать имя типа в одинарные кавычки не нужно. Подробнее об [индексируемых типах..][createindex-field-types]
-	
-	примеры передаваемых структур `Part`:
-	```c++
-	{3, "unsigned"} // 
-	{2, "signed"}   // 
-	{"field5", "boolean"} // 
-	```
-	Поля кортежей включаются в создаваемый индекс именно в том порядке в котором они расположены в списке `Parts`. Так, самая первая структура `Part` в списке `Parts` станет самой старшей значимой частью индекса а последняя в списке самой младшей.  Поэтому, индексы составленные по одним и тем же полям одних и тех же данных могут давать разные результаты выборки данных при одних и тех же параметрах запроса:
+    ```c++
+    struct Part {
+        QVariant Field;
+        QString  Type;
+    }
+    ```
+    где, 
+    > **Field** - беззнаковое целое число, позиция индексируемого поля в кортежах **или** строка содержащая имя поля если оно задано форматом спейса.
+    
+    > **Type** - строка с именем Lua-типа **значения** индексируемого поля. Типы полей которые могут быть включены в индекс: `unsigned`, `string`, `varbinary`, `integer`, `number`, `double`, `boolean`, `decimal`, `datetime`, `uuid`, `array`, `scalar`, `nil`. 
+    Заключать имя типа в одинарные кавычки не нужно. Подробнее об [индексируемых типах..][createindex-field-types]
+    
+    примеры передаваемых структур `Part`:
+    ```c++
+    {3, "unsigned"} // 
+    {2, "signed"}   // 
+    {"field5", "boolean"} // 
+    ```
+    Поля кортежей включаются в создаваемый индекс именно в том порядке в котором они расположены в списке `Parts`. Так, самая первая структура `Part` в списке `Parts` станет самой старшей значимой частью индекса а последняя в списке самой младшей.  Поэтому, индексы составленные по одним и тем же полям одних и тех же данных могут давать разные результаты выборки данных при одних и тех же параметрах запроса:
 ```c++
 QString sp ="test-space-index";
 QVariant data;
 uint spaceId;
 bool bIndexExist;
-	// create space with format
+    // create space with format
 qDebug() << "create space: " 
-		<< (spaceId =tnt.createSpace(sp, {"format ={{'F1'}, {'F2'}, {'F3'}}"}));
+        << (spaceId =tnt.createSpace(sp, {"format ={{'F1'}, {'F2'}, {'F3'}}"}));
 
-	if(!spaceId)
-		return;
-		
-	// create indexes by field names
-	qDebug() << "create indexes: " 
-							// primary index { F1 } (redundant in this example)
-			<< (bIndexExist =tnt.createIndex(sp, "primary", {{1, "unsigned"}}) 
-							// ascending index { F1, F2 }
-							&& tnt.createIndex(sp, "ascending", {{"F1", "unsigned"}, 
-																{"F2", "unsigned"}})
-							// descending index { F2, F1 }
-							&& tnt.createIndex(sp, "descending", {{"F2", "unsigned"}, 
-																{"F1", "unsigned"}}));
-	if(!bIndexExist)
-		return;
+    if(!spaceId)
+        return;
+        
+    // create indexes by field names
+    qDebug() << "create indexes: " 
+                            // primary index { F1 } (redundant in this example)
+            << (bIndexExist =tnt.createIndex(sp, "primary", {{1, "unsigned"}}) 
+                            // ascending index { F1, F2 }
+                            && tnt.createIndex(sp, "ascending", {{"F1", "unsigned"}, 
+                                                                {"F2", "unsigned"}})
+                            // descending index { F2, F1 }
+                            && tnt.createIndex(sp, "descending", {{"F2", "unsigned"}, 
+                                                                {"F1", "unsigned"}}));
+    if(!bIndexExist)
+        return;
 
-	// set tuples: { { F1, F2, F3 }, { F1, F2, F3 }, ... }
-	for(int c =0; c < 6; ++c)
-		tnt.setData(sp, {c, 5 - c, tr("data-%1").arg(c)}, false);
+    // set tuples: { { F1, F2, F3 }, { F1, F2, F3 }, ... }
+    for(int c =0; c < 6; ++c)
+        tnt.setData(sp, {c, 5 - c, tr("data-%1").arg(c)}, false);
 
-	// all data by 'ascending' index
-	data =tnt.getData(sp, {ALL, {}, "ascending"});
-	qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
-	// all data by 'descending' index
-	data =tnt.getData(sp, {ALL, {}, "descending"});
-	qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
-	
-	/*** RESULTS ***
-	All data by 'ascending' index
-	[
-		[0, 5, "data-0"], 
-		[1, 4, "data-1"], 
-		[2, 3, "data-2"], 
-		[3, 2, "data-3"], 
-		[4, 1, "data-4"], 
-		[5, 0, "data-5"]
-	]
+    // all data by 'ascending' index
+    data =tnt.getData(sp, {ALL, {}, "ascending"});
+    qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
+    // all data by 'descending' index
+    data =tnt.getData(sp, {ALL, {}, "descending"});
+    qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
+    
+    /*** RESULTS ***
+    All data by 'ascending' index
+    [
+        [0, 5, "data-0"], 
+        [1, 4, "data-1"], 
+        [2, 3, "data-2"], 
+        [3, 2, "data-3"], 
+        [4, 1, "data-4"], 
+        [5, 0, "data-5"]
+    ]
 
-	All data by 'descending' index
-	[
-		[5, 0, "data-5"], 
-		[4, 1, "data-4"], 
-		[3, 2, "data-3"], 
-		[2, 3, "data-2"], 
-		[1, 4, "data-1"], 
-		[0, 5, "data-0"]
-	]
-	**************/
+    All data by 'descending' index
+    [
+        [5, 0, "data-5"], 
+        [4, 1, "data-4"], 
+        [3, 2, "data-3"], 
+        [2, 3, "data-2"], 
+        [1, 4, "data-1"], 
+        [0, 5, "data-0"]
+    ]
+    **************/
 ```
 
 <a id ="createIndex-options"></a>
 * *  **options** - список строк Lua-выражений, вида:
-		```c++
-		{ "<option> = <value>", "<option> = <value>", ... }
-		```
-		где, значения Lua-типа `string` заключаются в одинарные кавычки `'`.
-		Таблица доступных опций:
+        ```c++
+        { "<option> = <value>", "<option> = <value>", ... }
+        ```
+        где, значения Lua-типа `string` заключаются в одинарные кавычки `'`. <br>
+        Таблица доступных опций:
 
 | Движок спейса | Опция | Lua-Тип | Значение | по умолчанию |
 |-|-|-|-|-|
-| `memtx` | `type` | `string` | `'HASH'` или `'TREE'` или `'BITSET'` или `'RTREE'` | `'TREE'` |
+| `memtx` | `type` | `string` | `'HASH'` или <br>`'TREE'` или <br>`'BITSET'` или <br>`'RTREE'` | `'TREE'` |
 |  | `id` | `number` |  | last index’s id + 1 |
 |  | `unique` | `boolean` |  | `true` |
 |  | `if_not_exists` | `boolean` |  | `false` |
 |  | `dimension` | `number` |  | `2` |
-|  | `distance` | `string` | `'euclid'` или `'manhattan'` | `'euclid'` |
-|  | `sequence` | `number|string` |  |  |
+|  | `distance` | `string` | `'euclid'` или <br>`'manhattan'` | `'euclid'` |
+|  | `sequence` | `number\|string` |  |  |
 |  | `func` | `string` |  |  |
 |  | `hint` | `boolean` |  | `true` |
 | `vinyl` | `bloom_fpr` | `number` |  | `vinyl_bloom_fpr` |
@@ -772,6 +778,7 @@ qDebug() << "create space: "
 |  | `range_size` | `number` |  | `vinyl_range_size` |
 |  | `run_count_per_level` | `number` |  | `vinyl_run_count_per_level` |
 |  | `run_size_ratio` | `number` |  | `vinyl_run_size_ratio` |
+
 Подробнее о значении опций [createIndex(..)][createindex-options-url]
 
 *   **isIndexExist**(const QString &spaceName, const QString &indexName)
@@ -796,9 +803,9 @@ qDebug() << tnt.isIndexExist("Tester", "primary");
 spaceName | QString | Имя спейса |
 indexName | QString | Имя удаляемого индекса |
 
-> **Следует иметь в виду, что:**
-	- Нельзя удалить **первичный индекс** если в спейсе существуют любые **другие** индексы кроме него.
-	- При удалении первичного индекса будут удалены **все** кортежи спейса.
+> **Следует иметь в виду, что:** <br>
+    - Нельзя удалить **первичный индекс** если в спейсе существуют любые **другие** индексы кроме него. <br>
+    - При удалении первичного индекса будут удалены **все** кортежи спейса.
 
 ```c++
 qDebug() << tnt.deleteIndex("Tester", "secondary");
@@ -810,29 +817,29 @@ qDebug() << tnt.deleteIndex("Tester", "secondary");
 |-|-|-|
 возвращает | QUIntMap | Объект типа `QMap <uint, QVariant>` содержащий атрибуты всех индексов во всех спейсах базы. |
 
-Метод выполняет Lua-функцию на сервере [box.space._index:select{}][_index-url] результат которой будет преобразован в объект типа `QUIntMap` следующей структуры:
+Метод выполняет `Lua`-функцию на сервере [box.space._index:select{}][_index-url] результат которой будет преобразован в объект типа `QUIntMap` следующей структуры:
 ```c++
 *** QUIntMap ***
 
 [spaceId]: List {
-	
+    
                 [0]: Map { <attributes> }
                 [1]: Map { <attributes> }
                 ...
            },
 [spaceId]: List {
-	
+    
                 [0]: Map { <attributes> }
                 ...
            },
 ...
 where, <attributes> is a QVariantMap like:
 {
-	"iid": 0,   // index identifier
-	"name": "", // index name
-	"type": "", // index type
-	"opts": [], // a list of the index's optional parameters
-	"parts": [] // list of fields included in the index
+    "iid": 0,   // index identifier
+    "name": "", // index name
+    "type": "", // index type
+    "opts": [], // a list of the index's optional parameters
+    "parts": [] // list of fields included in the index
 }
 ```
 т.е. это карта, ключами значений которой являются **идентификаторы** спейсов.  Каждое значение карты является **списком** типа `QVariantList`, размер которого равен **количеству** индексов в соответствующем спейсе. Каждый элемент такого списка является опять же картой, где ключами будут **имена атрибутов** соответствующего индекса.
@@ -848,7 +855,7 @@ where, <attributes> is a QVariantMap like:
 function | QString | Имя функции |
 args | `QVariantList` | Не обязательный. <br> Список аргументов функции |
 
-Метод вызывает указанную Lua-функцию на сервере `Tarantool`. 
+Метод вызывает указанную `Lua`-функцию на сервере `Tarantool`. <br>
 Результат вызова функции будет помещен в ответ сервера в формате структуры [REPLY](#reply_struct).
 
 ```c++
@@ -863,8 +870,8 @@ qDebug() << tnt.call("os.date", {"%A %B %d"}).Data[QTNT::IPROTO_DATA].toList();
 script | QString | Скрипт для выполнения |
 args | `QVariantList` | Список аргументов скрипта |
 
-Метод выполняет произвольный Lua-скрипт на сервере `Tarantool`.
-Аргументы скрипта передаются в место отмеченное (`...`) в теле скрипта.
+Метод выполняет произвольный `Lua`-скрипт на сервере `Tarantool`. <br>
+Аргументы скрипта передаются в место отмеченное (`...`) в теле скрипта. <br>
 Результат выполнения скрипта будет помещен в ответ сервера в формате структуры [REPLY](#reply_struct).
 ```c++
 qDebug() << tnt.exec("return box.info.version").Data[QTNT::IPROTO_DATA].toList();
@@ -883,8 +890,8 @@ qDebug() << tnt.exec("return box.info[...]", {"version"}).Data[QTNT::IPROTO_DATA
 Возвращает информацию о последней ошибке сообщенной сервером в формате структуры:
 ```c++
 struct ERROR {
-	int     code; // Error code reported by the server 
-	QString text; // Text message about the error reported by the server
+    int     code; // Error code reported by the server 
+    QString text; // Text message about the error reported by the server
 }
 ```
 
@@ -893,20 +900,21 @@ struct ERROR {
 
 ||  тип | значение |
 |-|-|-|
-возвращает | `REPLY` | Ответ сервера |
+возвращает | `const REPLY &` | Ответ сервера |
 header | QUIntMap |  Заголовок запроса в формате протокола [`IPROTO`][iproto-url] |
 body | QUIntMap | Данные запроса в формате протокола [`IPROTO`][iproto-url] |
 
-Единственный метод передачи запросов непосредственно на сервер. Все перечисленные выше методы, кроме `ping()`, работают через него.
+Единственный метод передачи запросов непосредственно на сервер. Все перечисленные выше методы, кроме `ping()`, работают через него. <br>
 Ответ сервера после распаковки `MessagePack` помещается в структуру `Reply` экземпляра `QTarantool`. При распаковке проверяется статус выполнения запроса, если статус не соответствует  `IPROTO_OK` то флаг структуры `IsValid` будет сброшен в `false` и сгенерирован сигнал `error( ERROR )`.
+
 <a id='reply_struct'></a>
 Структура `REPLY`:
 ```c++
 struct REPLY {
-	uint     Size;
-	QUIntMap Header;
-	QUIntMap Data;
-	bool     IsValid;
+    uint     Size;
+    QUIntMap Header;
+    QUIntMap Data;
+    bool     IsValid;
 }
 ```
 
@@ -923,10 +931,10 @@ struct REPLY {
                "OK"
 
 2. Добавить Qt-модуль 'network' в *.pro файл вашего проекта:
-	QT += network
+    QT += network
 
 3. Включить заголовочный файл QTarantool в исходники вашего проекта:
-	#include "..<relative-path-to>/qtarantool.h"
+    #include "..<relative-path-to>/qtarantool.h"
 ```
 Тестовые примеры Qt-проектов `QTarantool` вы можете найти в каталоге [Demo][demo-url] этого репозитория.
 

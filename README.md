@@ -5,7 +5,8 @@ The connector methods and a description of how they work can be found in the [`A
 In the [Demo][demo-url] directory of examples of how to use the connector, you will find - [TNT-Viewer][demo-viewer-url], which can be used to view and make some changes to the **existing** `Tarantool` database.
 
 ## Tarantool
-##### ![tg-icon] [EN][tg-url] [RU][tg-ru-url] --- [# Sources][tarantool-src] --- [# Documentation][tarantool-doc] --- [# Releases][tarantool-release]
+| ![tg-icon] [EN][tg-url] [RU][tg-ru-url] | [# Sources][tarantool-src] | [# Documentation][tarantool-doc] | [# Releases][tarantool-release] |
+|-|-|-|-|
 
 `Tarantool` is a `Lua` application server that includes a resident `NoSQL` database,
 which has high speed compared to traditional RDBMS with the same properties:
@@ -13,7 +14,8 @@ persistence, ACID transactivity, replications - master-slave, master-master.
 [more info..][tarantool-doc-ov-en]
 
 ## QTarantool API
-> [Server](#server) [User](#user) [Space](#space) [Index](#index) [Service](#service) [+++](#add)
+| [Server](#server) | [User](#user) | [Space](#space) | [Index](#index) | [Service](#service) | [+++](#add) |
+|-|-|-|-|-|-|
 
 All connector methods are `blocking`. 
 Control will be returned if a server reply is received (with `any status`) or by `timeout`.
@@ -26,7 +28,8 @@ Control will be returned if a server reply is received (with `any status`) or by
 || type | brief |
 |-|-|-|
 return | bool | Current server connection status |
-uri | QString | The `URI` server string in the format: `protocol://location:port`
+uri | QString | The `URI` server string in the format: `protocol://location:port` |
+
 Connects to the `Tarantool` server.  It also generate `signalConnected( bool )` signal. If there was an established server connection at the time the method was called, it connection will be disconnected.
 
 ```c++
@@ -56,7 +59,7 @@ return | bool | Current server connection status |
 ```c++
 if(tnt.isConnected())
 {
-	// TODO
+    // TODO
 }
 ```
 
@@ -78,8 +81,8 @@ return | QVariantMap | All **non-zero** server `Tarantool` configuration paramet
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.cfg())
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **slab**(const SLAB type)
@@ -87,17 +90,17 @@ qDebug("%s", QJsonDocument::fromVariant(tnt.cfg())
 || type | brief |
 |-|-|-|
 return | QVariantMap | Information on memory usage by the server. [Read more...][slab-url] |
-`type` | `SLAB::INFO` | Show aggregated memory usage report |
-|| `SLAB::DETAIL` | Show detailed memory usage report |
-|| `SLAB::RUNTIME` | Show memory usage report for the Lua runtime environment |
+type | SLAB::INFO | Show aggregated memory usage report |
+|| SLAB::DETAIL | Show detailed memory usage report |
+|| SLAB::RUNTIME | Show memory usage report for the Lua runtime environment |
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
-						{"slab::info", tnt.slab(SLAB::INFO)},
-						{"slab::detail", tnt.slab(SLAB::DETAIL)},
-						{"slab::runtime", tnt.slab(SLAB::RUNTIME)}})
-							.toJson(QJsonDocument::Indented)
-							.data());
+                                        {"slab::info", tnt.slab(SLAB::INFO)},
+                                        {"slab::detail", tnt.slab(SLAB::DETAIL)},
+                                        {"slab::runtime", tnt.slab(SLAB::RUNTIME)}})
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **info**()
@@ -107,9 +110,9 @@ qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
 |return | QVariantMap | All server status information returned by the [`box.info'][box-info-url] module |
 
 ```c++
-	qDebug("%s", QJsonDocument::fromVariant(tnt.info())
-			.toJson(QJsonDocument::Indented)
-			.data());
+qDebug("%s", QJsonDocument::fromVariant(tnt.info())
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **stat**(const STAT type)
@@ -117,17 +120,17 @@ qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
 || type | brief |
 |-|-|-|
 return | QVariantMap | Statistics on server network usage and requests. [Read more...][stat-url]|
-`type` | `STAT::REQUESTS` | Shows the total number of requests since start-up and the average number of requests per second |
-|| `STAT::NETWORK` | Shows statistics for network requests |
-|| `STAT::VINYL` | Shows the activity of the `Vinyl`-engine | 
+type | STAT::REQUESTS | Shows the total number of requests since start-up and the average number of requests per second |
+|| STAT::NETWORK | Shows statistics for network requests |
+|| STAT::VINYL | Shows the activity of the `Vinyl`-engine | 
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(QVariantMap {
-					{"stat::requests", tnt.stat(STAT::REQUESTS)},
-					{"stat::network", tnt.stat(STAT::NETWORK)},
-					{"stat::vinyl", tnt.stat(STAT::VINYL)}})
-				.toJson(QJsonDocument::Indented)
-				.data());
+                                        {"stat::requests", tnt.stat(STAT::REQUESTS)},
+                                        {"stat::network", tnt.stat(STAT::NETWORK)},
+                                        {"stat::vinyl", tnt.stat(STAT::VINYL)}})
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **getServerDirectory**()
@@ -160,9 +163,9 @@ The authentication procedure is mandatory once a connection to the server has be
 
 ```c++
 if(tnt.login("Alice", "alice-password"))
-	qDebug("Auth Success!");
+    qDebug("Auth Success!");
 else
-	qDebug("Auth Failed.");
+    qDebug("Auth Failed.");
 ```
 
 *  **logout**()
@@ -170,6 +173,7 @@ else
 || type | brief |
 |-|-|-|
 return | bool | Authentication result as `guest` user |
+
 Closes the current user's session and login as `guest`.
 
 ```c++
@@ -194,7 +198,7 @@ qDebug() << tnt.getUserName();
 |-|-|-|-|
 return | bool | Result of creating a new user | The current user must have `create` privilege to create new users. The user password is mandatory and cannot be empty. |
 userName | QString | Name of new user | |
-userPassword | const QString & | Password of new user | |
+userPassword | QString | Password of new user | |
 
 The method creates a new user with the specified password. If the user already existed the method will fail and return `false`.
 
@@ -212,8 +216,8 @@ userPrivileges | QString | A string of comma-separated privileges to will be gra
 objectType | QString | The type of object for which the privileges are granted. | Valid values: <br> `'space'`, `'user'`, `'role'`, `'sequence'`, `'function'`, `'trigger'`, `'universe'` <br>(by default `'universe'`). <br> Values other than `null`/`nil` is necessarily enclosed in **single** quotes `'` |
 objectName | QString | Object name | Arbitrary <br> (by default `null`). <br> Must be enclosed in **single** quotes `'` |
 
-[More about user privileges ..][grants-url]
-[Why the user **cannot** make requests like **EVAL**, i.e. - **all** of this connector ..][security-url]
+[More about user privileges ..][grants-url] <br> [Why the user **cannot** make requests like **EVAL**, i.e. - **all** of this connector ..][security-url]
+
 ```c++
 // full access to 'Test' space for user 'Bob'
 qDebug() << tnt.grantUser("Bob", "read,write,execute,create,drop", "'space'", "'Test'"); 
@@ -222,7 +226,7 @@ qDebug() << tnt.grantUser("Bob", "read,write,execute,create,drop", "'space'", "'
 *   **grantUserByRole**(const QString &userName, const QString &userRole)
 
 || type | brief |
-|-|-|-|-|
+|-|-|-|
 return | bool | Result of adding a new role to a user |
 userName | QString | User name |
 userRole | QString | Name of the **existing** new user role |
@@ -281,8 +285,8 @@ Equivalent to call `box.space._user:select{}`
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.users())
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **grants**(const QString &userName)
@@ -294,8 +298,8 @@ userName | QString | User name |
 
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.grants("Alice"))
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 ---
  #### Space
@@ -306,14 +310,14 @@ qDebug("%s", QJsonDocument::fromVariant(tnt.grants("Alice"))
 |-|-|-|-|
 return | uint | The identifier of the space created. `0` if failed. |
 spaceName | QString | Name of the new space |
-options | QStringList | List of **strings** with options for space creation. | Not mandatory. <br> Available options: <br> `engine`, `field_count`, `format`, `id`, `if_not_exists`, `is_local`, `is_sync`, `temporary`, `user` <br> [Подробнее..][space-create-url] |
+options | QStringList | List of **strings** with options for space creation. | Not mandatory. <br> Available options: <br> `engine`, `field_count`, `format`, `id`, `if_not_exists`, `is_local`, `is_sync`, `temporary`, `user` <br> [read more..][space-create-url] |
 
 Creates a new space with the specified name and optional parameters.
 
 ```c++
 tnt.createSpace("Tester2", {"engine =memtx", 
-							"format ={{'field1'}, {'field2'}, {'field3'}}"
-							});
+                            "format ={{'field1'}, {'field2'}, {'field3'}}"
+                            });
 ```
 Possible variations of the [format option...][format-url]
 
@@ -382,8 +386,8 @@ return | QVariantList | A list containing all attributes of all existing spaces.
 The method returns a list of lists containing attributes of all existing database spaces, including system spaces. Returned values will contain only metadata of the spaces without data stored in them.
 ```c++
 qDebug("%s", QJsonDocument::fromVariant(tnt.spaces())
-							.toJson(QJsonDocument::Indented)
-							.data());
+                            .toJson(QJsonDocument::Indented)
+                            .data());
 ```
 
 *   **getData**(const QString &spaceName, const Selector &selectorFrom, const Selector &selectorTo, const uint limit)
@@ -398,33 +402,33 @@ limit | uint | Maximum quantity of tuples to return | Not mandatory. <br> By def
 
 The method returns a list of tuples by selection conditions specified by `selectorFrom` / `selectorTo` and limited by `limit`. With this method, tuples cannot be searched by different indexes. The index specified in `selectorFrom` (by default `primary`) will be applied.
 
-> **Keep in mind, that:**
-	- The Selectors must be `counter-directional`
-	- The `selectorTo` must be on the search direction `selectorFrom`. Otherwise the selection will end at the Space boundary before reaching the specified search boundary.
+> **Keep in mind, that:** <br>
+    - The Selectors must be `counter-directional` <br>
+    - The `selectorTo` must be on the search direction `selectorFrom`. Otherwise the selection will end at the Space boundary before reaching the specified search boundary.
 
 ```c++
 QVariant data;
 
 // All data of Space "Tester". 
 // Here the "Tester" space has a primary index named "primary":
-	data =tnt.getData("Tester", {});
+    data =tnt.getData("Tester", {});
 
 // Data of Space "Tester" - with 'primary' index >= 100 And <= 300:
-	data =tnt.getData("Tester", {GE, {100}}, {LE, {300}});
+    data =tnt.getData("Tester", {GE, {100}}, {LE, {300}});
 // same data but in reverse sorting
-	data =tnt.getData("Tester", {LE, {300}}, {GE, {100}});
+    data =tnt.getData("Tester", {LE, {300}}, {GE, {100}});
 
-	qDebug("%s", QJsonDocument::fromVariant(data)
-								.toJson(QJsonDocument::Indented)
-								.data());
+    qDebug("%s", QJsonDocument::fromVariant(data)
+                                .toJson(QJsonDocument::Indented)
+                                .data());
 ```
 * * **Selector** - a simple structure for specifying boundary conditions when selecting tuples from a space:
     ```c++
     struct Selector {
-		OPERATOR Operator;
-		IndexKey Key;
-		QString  IndexName;
-	};
+        OPERATOR Operator;
+        IndexKey Key;
+        QString  IndexName;
+    };
     ```
     where, 
     > `Operator` - an enumeration of possible comparison operators:
@@ -439,38 +443,39 @@ QVariant data;
     | LT | Less-Than | < | Less (reverse direction) |
     | REQ | Reverse-EQual |  | Same as `EQ` but the reverse direction of search |
     
-    > `Key` - a list of values of `particular types` of arbitrary length representing the key being searched for. Valid types of values in fields of key:  `<any number type>`, `boolean`, `string`.
+    > `Key` - a list of values of `particular types` of arbitrary length representing the key being searched for. <br> 
+    Valid types of values in fields of key:  `<any number type>`, `boolean`, `string`.
    
     `IndexKey` as a inherit class of `QList` is initialized from a initialization list of the key being created or from a string representing it. An instance of a key object can be serialized to text using the `text()` instance method:
     ```c++
     IndexKey key {286, "test", "текст", -3.086};
-	IndexKey key2("{286, \"test\", \"текст\", -3.086}");
+    IndexKey key2("{286, \"test\", \"текст\", -3.086}");
 
-		qDebug() << key.text();
-		qDebug("%s", key.text().toUtf8().data());
+        qDebug() << key.text();
+        qDebug("%s", key.text().toUtf8().data());
 
-		qDebug() << key2.text();
-		qDebug("%s", key2.text().toUtf8().data());
-		// output
-		// "{286,\"test\",\"текст\",-3.086}"
-		// {286,"test","текст",-3.086}
+        qDebug() << key2.text();
+        qDebug("%s", key2.text().toUtf8().data());
+        // output
+        // "{286,\"test\",\"текст\",-3.086}"
+        // {286,"test","текст",-3.086}
     ```
     Examples of simple keys on a single tuple index field:
-	```
-	{152}
-	{"test value"}
-	{3.14159265359}
-	```
+    ```
+    {152}
+    {"test value"}
+    {3.14159265359}
+    ```
     multi-part keys for multi-part indexes:
     ```
     {333, 2.71828, "text", true}
     {29, 01, 2023}
     ```
-	Multi-part keys with a complex structure -`Hierarchical`, not supported by `Tarantool`:
-	```
-	{500, {{{555, 666}, 666}, 777}, 888, {600, {700, {"800"}}}, 900}
-	```
-	> `IndexName` - the name of the index that will be searched for. Defaults is `primary`, but can be any `unique/non-unique` index. It is not necessary to enclose the index name in single quotes. 
+    Multi-part keys with a complex structure -`Hierarchical`, not supported by `Tarantool`:
+    ```
+    {500, {{{555, 666}, 666}, 777}, 888, {600, {700, {"800"}}}, 900}
+    ```
+    > `IndexName` - the name of the index that will be searched for. Defaults is `primary`, but can be any `unique/non-unique` index. It is not necessary to enclose the index name in single quotes. 
 
 *   **getData**(const QString &spaceName, const IndexKey &key, const uint field, const QString &indexName)
 
@@ -564,13 +569,13 @@ indexName | QString | Not mandatory. <br> Name of the index in which the tuple i
 This method, like the previous one, changes the values of the tuple specified by the `key` key. But unlike that method, it allows you to perform not only **assignment**, but also any **other** available action on one or **several** tuple fields in one request.
 
 * * **Actions** - list of `Action` structures - planned actions on tuple fields.
-The `Action` structure looks like this:
+    The `Action` structure looks like this:
     ```c++
     struct Action {
-		QString	 Action;
-		int      Field;
-		QVariant Value;
-	};
+        QString  Action;
+        int      Field;
+        QVariant Value;
+    };
     ```
     where,
     > **`Action`** - a string with a symbol of the action (operation) available for the field:
@@ -581,19 +586,20 @@ The `Action` structure looks like this:
     | `+` | `Plus` | `Field += Value` | Add to field value the `Value` |
     | `-` | `Minus` | `Field -= Value` | Subtract from field value the `Value` |
     | `&` | `AND` | `Field &= Value` | `Bitwise AND` with `Value` |
-    | `|` | `OR` | `Field |= Value` | `Bitwise OR` with `Value` |
+    | `\|` | `OR` | `Field \|= Value` | `Bitwise OR` with `Value` |
     | `^` | `XOR` | `Field ^= Value` | `Bitwise XOR` with `Value` |
-	The result of the operation will be placed in the appropriate field of the tuple as a new value.
-	
-	> **Keep in mind, that:**
-		- Bitwise operations are performed **only** on `unsigned` fields. Those. do not apply to `bool` (*weirdness of `Tarantool`*). If the field type is not explicitly defined by the Space format, it can be changed by **assigning** a value of the desired type.
-		- More than one action on the same field in one transaction is not allowed
-		- If an error occurs while performing at least one operation from the list, none of the operations in the transaction will be applied
-	
-	> **`Field`** - The position of the field to change.
-	The rules are the same as in the [previous](#changeData1) method for the `field` argument.
-	
-	> **`Value`** - The value that is used in the operation on the field.
+
+    The result of the operation will be placed in the appropriate field of the tuple as a new value.
+    
+    > **Keep in mind, that:** <br>
+        - Bitwise operations are performed **only** on `unsigned` fields. Those. do not apply to `bool` (*weirdness of `Tarantool`*). If the field type is not explicitly defined by the Space format, it can be changed by **assigning** a value of the desired type. <br>
+        - More than one action on the same field in one transaction is not allowed <br>
+        - If an error occurs while performing at least one operation from the list, none of the operations in the transaction will be applied <br>
+    
+    > **`Field`** - The position of the field to change.
+    The rules are the same as in the [previous](#changeData1) method for the `field` argument.
+    
+    > **`Value`** - The value that is used in the operation on the field.
 
 To demonstrate how the method works, let's take a tuple from the [previous](#test-tuple) example and make changes:
 ```c++
@@ -601,8 +607,8 @@ To demonstrate how the method works, let's take a tuple from the [previous](#tes
 // * Subtract from <5> field value: 0.015
 // * Change <3> field from the end (before penultimate) to: "bob@mail.com"
 qDebug() << tnt.changeData("Tester", {115726}, {{"+", 4, 1}, 
-												{"-", 5, 0.015}, 
-												{"=", -3, "bob@mail.com"}});
+                                                {"-", 5, 0.015}, 
+                                                {"=", -3, "bob@mail.com"}});
 ```
 
 *   **getSpaceId**(const QString &spaceName)
@@ -670,101 +676,101 @@ parts | Parts | List of `Part` structures describing the fields of tuples that w
 options | QStringList | Optional parameters for the index being created | Not mandatory. <br> The `'parts'` option **should not** be used here as it is passed by the `parts` list above. <br> [Valid Options](#createIndex-options)
 
 * * **parts** - the list contains `Part` structures like:
-	```c++
-	struct Part {
-		QVariant Field;
-		QString  Type;
-	}
-	```
-	where,
-	> **Field** - unsigned integer, indexed field position in tuples **or** a string containing the field name if it is specified by the space format.
-	
-	> **Type** - a string with the name of the Lua-type **value** of the indexed field. Field types that can be included in an index: `unsigned`, `string`, `varbinary`, `integer`, `number`, `double`, `boolean`, `decimal`, `datetime`, `uuid`, `array`, `scalar`, `nil`. 
-	You do not need to enclose the type name in single quotes. Learn more about [indexed types..][createindex-field-types]
-	
-	examples of `Part` structures being passed:
-	```c++
-	{3, "unsigned"} // 
-	{2, "signed"}   // 
-	{"field5", "boolean"} // 
-	```
-	The fields of the tuples are included in the created index exactly in the order in which they are located in the `Parts` list. Thus, the very first `Part` structure in the `Parts` list will become the most significant part of the index, and the last one in the list will be the least significant part of the index.  Therefore, indexes that include the same fields on the same data can give different data selection results with the same query parameters:
+    ```c++
+    struct Part {
+        QVariant Field;
+        QString  Type;
+    }
+    ```
+    where,
+    > **Field** - unsigned integer, indexed field position in tuples **or** a string containing the field name if it is specified by the space format.
+    
+    > **Type** - a string with the name of the Lua-type **value** of the indexed field. Field types that can be included in an index: `unsigned`, `string`, `varbinary`, `integer`, `number`, `double`, `boolean`, `decimal`, `datetime`, `uuid`, `array`, `scalar`, `nil`. 
+    You do not need to enclose the type name in single quotes. Learn more about [indexed types..][createindex-field-types]
+    
+    examples of `Part` structures being passed:
+    ```c++
+    {3, "unsigned"} // 
+    {2, "signed"}   // 
+    {"field5", "boolean"} // 
+    ```
+    The fields of the tuples are included in the created index exactly in the order in which they are located in the `Parts` list. Thus, the very first `Part` structure in the `Parts` list will become the most significant part of the index, and the last one in the list will be the least significant part of the index.  Therefore, indexes that include the same fields on the same data can give different data selection results with the same query parameters:
 ```c++
 QString sp ="test-space-index";
 QVariant data;
 uint spaceId;
 bool bIndexExist;
-	// create space with format
+    // create space with format
 qDebug() << "create space: " 
-		<< (spaceId =tnt.createSpace(sp, {"format ={{'F1'}, {'F2'}, {'F3'}}"}));
+        << (spaceId =tnt.createSpace(sp, {"format ={{'F1'}, {'F2'}, {'F3'}}"}));
 
-	if(!spaceId)
-		return;
-		
-	// create indexes by field names
-	qDebug() << "create indexes: " 
-							// primary index { F1 } (redundant in this example)
-			<< (bIndexExist =tnt.createIndex(sp, "primary", {{1, "unsigned"}}) 
-							// ascending index { F1, F2 }
-							&& tnt.createIndex(sp, "ascending", {{"F1", "unsigned"}, 
-																{"F2", "unsigned"}})
-							// descending index { F2, F1 }
-							&& tnt.createIndex(sp, "descending", {{"F2", "unsigned"}, 
-																{"F1", "unsigned"}}));
-	if(!bIndexExist)
-		return;
+    if(!spaceId)
+        return;
+        
+    // create indexes by field names
+    qDebug() << "create indexes: " 
+                            // primary index { F1 } (redundant in this example)
+            << (bIndexExist =tnt.createIndex(sp, "primary", {{1, "unsigned"}}) 
+                            // ascending index { F1, F2 }
+                            && tnt.createIndex(sp, "ascending", {{"F1", "unsigned"}, 
+                                                                {"F2", "unsigned"}})
+                            // descending index { F2, F1 }
+                            && tnt.createIndex(sp, "descending", {{"F2", "unsigned"}, 
+                                                                {"F1", "unsigned"}}));
+    if(!bIndexExist)
+        return;
 
-	// set tuples: { { F1, F2, F3 }, { F1, F2, F3 }, ... }
-	for(int c =0; c < 6; ++c)
-		tnt.setData(sp, {c, 5 - c, tr("data-%1").arg(c)}, false);
+    // set tuples: { { F1, F2, F3 }, { F1, F2, F3 }, ... }
+    for(int c =0; c < 6; ++c)
+        tnt.setData(sp, {c, 5 - c, tr("data-%1").arg(c)}, false);
 
-	// all data by 'ascending' index
-	data =tnt.getData(sp, {ALL, {}, "ascending"});
-	qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
-	// all data by 'descending' index
-	data =tnt.getData(sp, {ALL, {}, "descending"});
-	qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
-	
-	/*** RESULTS ***
-	All data by 'ascending' index
-	[
-		[0, 5, "data-0"], 
-		[1, 4, "data-1"], 
-		[2, 3, "data-2"], 
-		[3, 2, "data-3"], 
-		[4, 1, "data-4"], 
-		[5, 0, "data-5"]
-	]
+    // all data by 'ascending' index
+    data =tnt.getData(sp, {ALL, {}, "ascending"});
+    qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
+    // all data by 'descending' index
+    data =tnt.getData(sp, {ALL, {}, "descending"});
+    qDebug("%s", QJsonDocument::fromVariant(data).toJson(QJsonDocument::Indented).data());
+    
+    /*** RESULTS ***
+    All data by 'ascending' index
+    [
+        [0, 5, "data-0"], 
+        [1, 4, "data-1"], 
+        [2, 3, "data-2"], 
+        [3, 2, "data-3"], 
+        [4, 1, "data-4"], 
+        [5, 0, "data-5"]
+    ]
 
-	All data by 'descending' index
-	[
-		[5, 0, "data-5"], 
-		[4, 1, "data-4"], 
-		[3, 2, "data-3"], 
-		[2, 3, "data-2"], 
-		[1, 4, "data-1"], 
-		[0, 5, "data-0"]
-	]
-	**************/
+    All data by 'descending' index
+    [
+        [5, 0, "data-5"], 
+        [4, 1, "data-4"], 
+        [3, 2, "data-3"], 
+        [2, 3, "data-2"], 
+        [1, 4, "data-1"], 
+        [0, 5, "data-0"]
+    ]
+    **************/
 ```
 
 <a id ="createIndex-options"></a>
 * *  **options** - a list of Lua-expression strings, like:
-		```c++
-		{ "<option> = <value>", "<option> = <value>", ... }
-		```
-		where, values of Lua-type `string` are enclosed in single quotes `'`.
+        ```c++
+        { "<option> = <value>", "<option> = <value>", ... }
+        ```
+        where, values of `Lua`-type `string` are enclosed in single quotes `'`. <br>
 Table of available options:
 
 | Space engine | Option | Lua-Type | Brief | By default |
 |-|-|-|-|-|
-| `memtx` | `type` | `string` | `'HASH'` or `'TREE'` or `'BITSET'` or `'RTREE'` | `'TREE'` |
+| `memtx` | `type` | `string` | `'HASH'` or <br>`'TREE'` or <br>`'BITSET'` or <br>`'RTREE'` | `'TREE'` |
 |  | `id` | `number` |  | last index’s id + 1 |
 |  | `unique` | `boolean` |  | `true` |
 |  | `if_not_exists` | `boolean` |  | `false` |
 |  | `dimension` | `number` |  | `2` |
-|  | `distance` | `string` | `'euclid'` или `'manhattan'` | `'euclid'` |
-|  | `sequence` | `number|string` |  |  |
+|  | `distance` | `string` | `'euclid'` or <br>`'manhattan'` | `'euclid'` |
+|  | `sequence` | `number\|string` |  |  |
 |  | `func` | `string` |  |  |
 |  | `hint` | `boolean` |  | `true` |
 | `vinyl` | `bloom_fpr` | `number` |  | `vinyl_bloom_fpr` |
@@ -772,6 +778,7 @@ Table of available options:
 |  | `range_size` | `number` |  | `vinyl_range_size` |
 |  | `run_count_per_level` | `number` |  | `vinyl_run_count_per_level` |
 |  | `run_size_ratio` | `number` |  | `vinyl_run_size_ratio` |
+
 More about the meaning of options [createIndex(..)][createindex-options-url]
 
 *   **isIndexExist**(const QString &spaceName, const QString &indexName)
@@ -796,9 +803,9 @@ return | bool | The result of deleting the space index |
 spaceName | QString | Space name |
 indexName | QString | The name of the index to be deleted |
 
-> **Keep in mind, that:**
-	- You cannot delete a **primary index** if any **other** indexes exist in the space except for it.
-	- Deleting the primary index will delete **all** tuples of the space.
+> **Keep in mind, that:** <br>
+    - You cannot delete a **primary index** if any **other** indexes exist in the space except for it. <br>
+    - Deleting the primary index will delete **all** tuples of the space.
 
 ```c++
 qDebug() << tnt.deleteIndex("Tester", "secondary");
@@ -810,29 +817,29 @@ qDebug() << tnt.deleteIndex("Tester", "secondary");
 |-|-|-|
 return | QUIntMap | An object of type `QMap <uint, QVariant>` containing attributes of all indexes for all spaces of database. |
 
-The method executes a Lua-function on the server [box.space._index:select{}][_index-url] whose result will be converted into an object of type `QUIntMap` with the following structure:
+The method executes a `Lua`-function on the server [box.space._index:select{}][_index-url] whose result will be converted into an object of type `QUIntMap` with the following structure:
 ```c++
 *** QUIntMap ***
 
 [spaceId]: List {
-	
+    
                 [0]: Map { <attributes> }
                 [1]: Map { <attributes> }
                 ...
            },
 [spaceId]: List {
-	
+    
                 [0]: Map { <attributes> }
                 ...
            },
 ...
 where, <attributes> is a QVariantMap like:
 {
-	"iid": 0,   // index identifier
-	"name": "", // index name
-	"type": "", // index type
-	"opts": [], // a list of the index's optional parameters
-	"parts": [] // list of fields included in the index
+    "iid": 0,   // index identifier
+    "name": "", // index name
+    "type": "", // index type
+    "opts": [], // a list of the index's optional parameters
+    "parts": [] // list of fields included in the index
 }
 ```
 i.e. this is a map whose value keys are **identifiers** of spaces.  Each map value is a **list** of type `QVariantList` whose length is **number** of indexes in the corresponding space. Each element of such a list is again a map, where the keys are **attribute names** of the corresponding index.
@@ -848,7 +855,7 @@ return | `const REPLY &` | Result of server function call |
 function | QString | Function name |
 args | `QVariantList` | Not mandatory. <br> Function argument list |
 
-The method calls the specified **Lua-function** on the `Tarantool` server.
+The method calls the specified `Lua`-function on the `Tarantool` server.
 The result of the function call will be placed in the server response in the format of the [REPLY](#reply_struct) structure.
 
 ```c++
@@ -863,8 +870,8 @@ return | `const REPLY &` | The result of the script execution |
 script | QString | Script to execute |
 args | `QVariantList` | List of script arguments |
 
-The method executes an arbitrary **Lua-script** on the `Tarantool` server.
-The script arguments are passed to the location marked (`...`) in the body of the script.
+The method executes an arbitrary `Lua`-script on the `Tarantool` server.
+The script arguments are passed to the location marked (`...`) in the body of the script. <br>
 The result of the script execution will be placed in the server response in the format of the [REPLY](#reply_struct) structure.
 ```c++
 qDebug() << tnt.exec("return box.info.version").Data[QTNT::IPROTO_DATA].toList();
@@ -883,8 +890,8 @@ return | `ERROR` | Information about the last error while executing the request 
 Returns information about the last error reported by the server in structure format:
 ```c++
 struct ERROR {
-	int     code; // Error code reported by the server 
-	QString text; // Text message about the error reported by the server
+    int     code; // Error code reported by the server 
+    QString text; // Text message about the error reported by the server
 }
 ```
 
@@ -893,20 +900,21 @@ struct ERROR {
 
 || type | brief |
 |-|-|-|
-return | `REPLY` | Server reply |
+return | `const REPLY &` | Server reply |
 header | QUIntMap |  Request header in protocol format [`IPROTO`][iproto-url] |
 body | QUIntMap | Request data in protocol format [`IPROTO`][iproto-url] |
 
-This is the only class method that sends requests directly to the server. All of the methods listed above, except for `ping()`, work through it.
+This is the only class method that sends requests directly to the server. All of the methods listed above, except for `ping()`, work through it. <br>
 The server's response after unpacking the `MessagePack` is placed in the `Reply` structure of the `QTarantool` instance. When unpacking, the execution status of the request is checked, if the status does not equal to `IPROTO_OK` then the structure flag `IsValid` will be reset to `false` and an `error( ERROR )` signal will be generated.
+
 <a id='reply_struct'></a>
 `REPLY` structure:
 ```c++
 struct REPLY {
-	uint     Size;
-	QUIntMap Header;
-	QUIntMap Data;
-	bool     IsValid;
+    uint     Size;
+    QUIntMap Header;
+    QUIntMap Data;
+    bool     IsValid;
 }
 ```
 
@@ -923,10 +931,10 @@ struct REPLY {
                "OK"
 
 2. Add 'network' Qt-module to your project *.pro file:
-	QT += network
+    QT += network
 
 3. Add QTarantool header to your source file(s):
-	"..<relative-path-to>/qtarantool.h"
+    "..<relative-path-to>/qtarantool.h"
 ```
 You can find test Qt-projects for `QTarantool` in the [Demo][demo-url] directory of this repository.
 
