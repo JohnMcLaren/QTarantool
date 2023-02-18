@@ -468,7 +468,7 @@ public:
 	bool
 	changeData(const QString &spaceName, const IndexKey &key, const Actions &actions, const QString &indexName ="");
 	bool
-	deleteData(const QString &spaceName, const IndexKey &key, const QString &indexName ="primary"); // Delete existing tuple (by any unique index). Return 'false' on error.
+	deleteData(const QString &spaceName, const IndexKey &key, const QString &indexName =""); // Delete existing tuple (by any unique index). Return 'false' on error.
 	uint
 	getSpaceId(const QString &spaceName);
 	QString

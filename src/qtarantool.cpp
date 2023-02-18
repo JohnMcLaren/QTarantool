@@ -243,7 +243,7 @@ return("");
 bool
 QTarantool::createUser(const QString &userName, const QString &userPassword)
 {
-	return(exec(tr("box.schema.user.create('%1', {password ='%2', if_not_exists =false})").arg(userName).arg(userPassword)).IsValid);
+	return(exec("box.schema.user.create(...)", {userName, Map {{"password", userPassword}, {"if_not_exists", false}}}).IsValid);
 }
 /****************************************************************************************
  * Set User grants.
@@ -251,8 +251,8 @@ QTarantool::createUser(const QString &userName, const QString &userPassword)
 bool
 QTarantool::grantUser(const QString &userName, const QString &userPrivileges, const QString &objectType, const QString &objectName)
 {
-	// [FIXME] ERROR: 42 "Grant access to universe '' is denied for user ''"
-	return(exec(tr("box.schema.user.grant('%1','%2',%3,%4,{if_not_exists =true})").arg(userName).arg(userPrivileges).arg(objectType).arg(objectName)).IsValid);
+// [FIXME] ERROR: 42 "Grant access to universe '' is denied for user ''"
+	return(exec("box.schema.user.grant(...)", {userName, userPrivileges, objectType, objectName, Map {{"if_not_exists", true}}}).IsValid);
 }
 /****************************************************************************************
  *
@@ -260,7 +260,7 @@ QTarantool::grantUser(const QString &userName, const QString &userPrivileges, co
 bool
 QTarantool::grantUserByRole(const QString &userName, const QString &userRole)
 {
-	return(exec(tr("box.schema.user.grant('%1','%2',null,null,{if_not_exists =true})").arg(userName).arg(userRole)).IsValid);
+	return(exec("box.schema.user.grant(...)", {userName, userRole, VARNULL, VARNULL, Map {{"if_not_exists", true}}}).IsValid);
 }
 /****************************************************************************************
  *
@@ -369,7 +369,7 @@ QTarantool::changeSpace(const QString &spaceName, const QStringList &newParams)
 bool
 QTarantool::clearSpace(const QString &spaceName)
 {
-	return(exec(tr("box.space['%1']:truncate()").arg(spaceName)).IsValid);
+	return(exec("box.space[...]:truncate()", {spaceName}).IsValid);
 }
 /****************************************************************************************
  * Return: true if successful deleted/destroyed Space[<name>] otherwise false.
@@ -377,22 +377,7 @@ QTarantool::clearSpace(const QString &spaceName)
 bool
 QTarantool::deleteSpace(const QString &spaceName)
 {
-	return(exec(tr("box.space['%1']:drop()").arg(spaceName)).IsValid);
-}
-/****************************************************************************************
- * Return: List all spaces with attributes
-****************************************************************************************/
-const QVariantList &
-QTarantool::spaces()
-{
-	exec("return box.space._space:select{}");
-
-const auto &DataList =reinterpret_cast<const QVariantList &>(Reply.Data[IPROTO_DATA]);
-
-	if(Reply.IsValid)
-		return(reinterpret_cast<const QVariantList &>(DataList[0]));
-
-return(LISTNULL);
+	return(exec("box.space[...]:drop()", {spaceName}).IsValid);
 }
 /****************************************************************************************
  *
@@ -454,9 +439,9 @@ const QVariant &
 QTarantool::getData(const QString &spaceName, const IndexKey &key, const uint field, const QString &indexName)
 {
 	if(indexName.isEmpty())
-		exec(tr("return box.space['%1']:get(%2)[...]").arg(spaceName).arg(key.text()), {field});
+		exec(tr("return box.space['%1']:get(...)[%2]").arg(spaceName).arg(field), key);
 	else
-		exec(tr("return box.space['%1'].index['%2']:get(%3)[...]").arg(spaceName).arg(indexName).arg(key.text()), {field});
+		exec(tr("return box.space['%1'].index['%2']:get(...)[%3]").arg(spaceName).arg(indexName).arg(field), key);
 
 const auto &DataList =reinterpret_cast<const QVariantList &>(Reply.Data[IPROTO_DATA]);
 
@@ -481,7 +466,7 @@ QTarantool::setData(const QString &spaceName, const QVariantList &tuple, const b
 							"local t ={...};"
 							"if s:get(require('key_def').new(s.index[0].parts):extract_key(t)) then"
 							"	s:replace(t);"
-							"else error('Key not found!') end", tuple).IsValid);
+							"else error('Key not found.') end", tuple).IsValid);
 return(false);
 }
 /****************************************************************************************
@@ -527,9 +512,9 @@ QTarantool::changeData(const QString &spaceName, const IndexKey &key, const int 
 		return(false);
 
 	if(indexName.isEmpty())
-		return(exec(tr("box.space['%1']:update(%2, {{'=', %3, ...}})").arg(spaceName).arg(key.text()).arg(field), {value}).IsValid);
+		return(exec(tr("box.space['%1']:update(...)").arg(spaceName), {key, List { List {"=", field, value}}}).IsValid);
 	else
-		return(exec(tr("box.space['%1'].index['%2']:update(%3, {{'=', %4, ...}})").arg(spaceName).arg(indexName).arg(key.text()).arg(field), {value}).IsValid);
+		return(exec(tr("box.space['%1'].index['%2']:update(...)").arg(spaceName).arg(indexName), {key, List { List {"=", field, value}}}).IsValid);
 }
 /****************************************************************************************
  * Applies the chosen 'actions' to the fields of the selected tuple by 'key' in any unique index 'indexName'.
@@ -541,9 +526,9 @@ QTarantool::changeData(const QString &spaceName, const IndexKey &key, const Acti
 		return(false);
 
 	if(indexName.isEmpty())
-		return(exec(tr("box.space['%1']:update(%2, {...})").arg(spaceName).arg(key.text()), actions).IsValid);
+		return(exec(tr("box.space['%1']:update(...)").arg(spaceName), {key, {actions}}).IsValid);
 	else
-		return(exec(tr("box.space['%1'].index['%2']:update(%3, {...})").arg(spaceName).arg(indexName).arg(key.text()), actions).IsValid);
+		return(exec(tr("box.space['%1'].index['%2']:update(...)").arg(spaceName).arg(indexName), {key, {actions}}).IsValid);
 }
 /****************************************************************************************
  * Delete tuple by 'key'
@@ -551,7 +536,13 @@ QTarantool::changeData(const QString &spaceName, const IndexKey &key, const Acti
 bool
 QTarantool::deleteData(const QString &spaceName, const IndexKey &key, const QString &indexName)
 {
-	return(exec(tr("box.space['%1'].index['%2']:delete{...}").arg(spaceName).arg(indexName), key).IsValid);
+	if(!key.size())
+		return(false);
+
+	if(indexName.isEmpty())
+		return(exec(tr("box.space['%1']:delete{...}").arg(spaceName), key).IsValid);
+	else
+		return(exec(tr("box.space['%1'].index['%2']:delete{...}").arg(spaceName).arg(indexName), key).IsValid);
 }
 /****************************************************************************************
  * Returns the quantity of tuples in the Space.
@@ -561,7 +552,7 @@ QTarantool::deleteData(const QString &spaceName, const IndexKey &key, const QStr
 qlonglong
 QTarantool::getSpaceLength(const QString &spaceName)
 {
-	exec(tr("return box.space['%1']:len()").arg(spaceName));
+	exec("return box.space[...]:len()", {spaceName});
 
 	if(Reply.IsValid)
 		return(Reply.Data[IPROTO_DATA].toList()[0].value<qlonglong>());
@@ -574,12 +565,60 @@ return(-1);
 qlonglong
 QTarantool::getSpaceSize(const QString &spaceName)
 {
-	exec(tr("return box.space['%1']:bsize()").arg(spaceName));
+	exec("return box.space[...]:bsize()", {spaceName});
 
 	if(Reply.IsValid)
 		return(Reply.Data[IPROTO_DATA].toList()[0].value<qlonglong>());
 
 return(-1);
+}
+/****************************************************************************************
+ * Return: List all spaces with attributes
+****************************************************************************************/
+const QVariantList &
+QTarantool::spaces()
+{
+	exec("return box.space._space:select{}");
+
+const auto &DataList =reinterpret_cast<const QVariantList &>(Reply.Data[IPROTO_DATA]);
+
+	if(Reply.IsValid)
+		return(reinterpret_cast<const QVariantList &>(DataList[0]));
+
+return(LISTNULL);
+}
+/****************************************************************************************
+ *
+****************************************************************************************/
+bool
+QTarantool::createIndex(const QString &spaceName, const QString &indexName, const Parts &parts, const QStringList &options)
+{
+QStringList tmp(options);
+// [FIXME] format string is temp solution
+	tmp +=("parts =" + parts.text());
+
+return(exec(tr("box.space['%1']:create_index('%2', {%3})").arg(spaceName).arg(indexName).arg(tmp.join(','))).IsValid);
+}
+/****************************************************************************************
+ *
+****************************************************************************************/
+bool
+QTarantool::isIndexExist(const QString &spaceName, const QString &indexName)
+{
+	exec(tr("return box.space['%1'].index['%2'] ~= null").arg(spaceName).arg(indexName));
+
+	if(Reply.IsValid)
+		return(Reply.Data[IPROTO_DATA].toList()[0].toBool());
+
+return(false);
+}
+/****************************************************************************************
+ *
+****************************************************************************************/
+bool
+QTarantool::deleteIndex(const QString &spaceName, const QString &indexName)
+{
+	return(exec(tr("box.space['%1'].index['%2']:drop()").arg(spaceName).arg(indexName)).IsValid);
 }
 /****************************************************************************************
  * Returns all indexes of all Spaces as a map (UIntMap),
@@ -614,39 +653,6 @@ QTarantool::indexes()
 	}
 
 return(QUIntMap {});
-}
-/****************************************************************************************
- *
-****************************************************************************************/
-bool
-QTarantool::createIndex(const QString &spaceName, const QString &indexName, const Parts &parts, const QStringList &options)
-{
-QStringList tmp(options);
-// [FIXME] format string is temp solution
-	tmp +=("parts =" + parts.text());
-
-return(exec(tr("box.space['%1']:create_index('%2', {%3})").arg(spaceName).arg(indexName).arg(tmp.join(','))).IsValid);
-}
-/****************************************************************************************
- *
-****************************************************************************************/
-bool
-QTarantool::isIndexExist(const QString &spaceName, const QString &indexName)
-{
-	exec(tr("return box.space['%1'].index[...] ~= null").arg(spaceName), {indexName});
-
-	if(Reply.IsValid)
-		return(Reply.Data[IPROTO_DATA].toList()[0].toBool());
-
-return(false);
-}
-/****************************************************************************************
- *
-****************************************************************************************/
-bool
-QTarantool::deleteIndex(const QString &spaceName, const QString &indexName)
-{
-	return(exec(tr("box.space['%1'].index['%2']:drop()").arg(spaceName).arg(indexName)).IsValid);
 }
 /****************************************************************************************
  * Calls an arbitrary Lua-function on the server.
