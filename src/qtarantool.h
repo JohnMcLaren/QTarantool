@@ -13,7 +13,6 @@
 #include <QElapsedTimer> // for Windows
 #include <QEventLoop>
 #include <QTcpSocket>
-#include <QDataStream>
 #include <QThread>
 #include <QUrl>
 #include <QJsonObject>
@@ -293,7 +292,7 @@ class QTarantool : public QThread
 
 public:
 	explicit QTarantool(QObject *parent = nullptr);
-	~QTarantool() { disconnectServer(); delete socket; };
+	~QTarantool() { disconnectServer(); socket->deleteLater(); };
 
 	// for 'Get' tuples methods
 	struct Selector
@@ -500,13 +499,12 @@ public:
 
 // ...
 	const ERROR &
-	getLastError() { return(lasterror); };
+	getLastError() { return(lasterror); }
 
 	int exec() =delete; // hide parent <exec> method
 
 private:
-	QTcpSocket *socket;
-	QDataStream socketstream; // ??
+	QAbstractSocket *socket;
 	QString version; // server version
 	QByteArray salt; // session salt
 	bool bInit =false;
@@ -527,7 +525,22 @@ private:
 		lasterror =msg;
 		emit error(msg);
 	}
-	static void
+	/***************************************************************
+	* [QT-NOTE]
+	* waitForReadyRead(...) - This function may fail randomly on Windows.
+	* Consider using the event loop and the readyRead() signal
+	* if your software will run on Windows.
+	* [Win-QT-BUG] https://bugreports.qt.io/browse/QTBUG-24451
+	***************************************************************/
+	inline bool
+	waitForSocketRead(int timeout) {
+	#if !defined(Q_OS_WIN) /* Linux & Co */
+		return(socket->waitForReadyRead(timeout));
+	#else				/* Windows */
+		return(waitFor(socket, SIGNAL(readyRead()), timeout));
+	#endif
+	}
+	static bool
 	waitFor(const QObject *object, const char *signal, int timeout);
 
 #pragma pack(1)
@@ -550,20 +563,13 @@ private:
 	};
 
 private slots:
-	void onSocketConnected();
-	void onSocketDisconnected();
-	void onSocketError(QAbstractSocket::SocketError error);
-	void readyRead();
+	void on_SocketConnected();
+	void on_SocketDisconnected();
+	void on_SocketError(QAbstractSocket::SocketError error);
 
 signals:
-	//void signalReceived(const QByteArray &data);
 	void signalConnected(const bool bConnected);
 	void error(const ERROR &msg);
 };
 
 }
-
-
-
-
-

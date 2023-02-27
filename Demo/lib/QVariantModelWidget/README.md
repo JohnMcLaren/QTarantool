@@ -41,6 +41,7 @@ The classes inherited from `QAbstractItemModel`, `QTreeView`, `QTableView`.
 3. There are no data `View` decorations in the widgets. 
 	Sort order, background/text colors, key icons - all these attributes of data view 
 	<u>require additional structure</u> for their storage which isn`t realized in the widgets.
+4. Qt5 only. Adapting this code for Qt6 requires a lot of non-trivial "crutches", so it was decided to abandon Qt6 support.
     
 ### Minimal usage examples:
 1. Using the Tree and Table widgets on the same data. Widgets are not linked by data update signals. The data is copied to the internal data source of the model during initialisation. That is, the original `varTable` object will not be changed if the model data changes:

@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(tableDetail, &QVariantTableWidget::dataWillBeChanged, this, &MainWindow::on_TableDataWillBeChanged);
 	connect(frmGetSpaceData, &FormGetData::clickedGet, this, &MainWindow::on_GetClicked);
 	connect(frmSetSpaceData, &FormSetData::clickedSet, this, &MainWindow::on_SetClicked);
-	connect(&cmdConnect, &QPushButton::clicked, [&] () {
+	connect(&cmdConnect, &QPushButton::clicked, this, [&] () {
 
 		if(tnt.isConnected())
 			tnt.disconnectServer();

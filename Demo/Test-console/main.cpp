@@ -30,7 +30,10 @@ typedef QString txt;
 **************************************************************************************************/
 int main(int argc, char *argv[])
 {
-QCoreApplication a(argc, argv); // This is necessary for <QEventLoop> objects
+#ifdef Q_OS_WIN
+	QCoreApplication a(argc, argv); /* for QEventLoop in Windows only */
+#endif
+
 QTarantool tnt;
 
 bool batch_mode =true;

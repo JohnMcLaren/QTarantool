@@ -11,16 +11,16 @@ using namespace QTNT;
 //----------------------------------------------------------------------------------------
 QTarantool::QTarantool(QObject *parent) : QThread(parent)
 {
-	socket = new QTcpSocket();
+	socket = new QTcpSocket(this);
+	//socket->setSocketOption(QTcpSocket::ReceiveBufferSizeSocketOption, 10000000);
 
-	connect(socket, &QTcpSocket::connected, this, &QTarantool::onSocketConnected); // [QT-NOTE] Qt::QueuedConnection required qRegisterMetaType()
-	connect(socket, &QTcpSocket::disconnected, this, &QTarantool::onSocketDisconnected);
-	connect(socket, &QTcpSocket::readyRead, this, &QTarantool::readyRead);
+	connect(socket, &QTcpSocket::connected, this, &QTarantool::on_SocketConnected); // [QT-NOTE] Qt::QueuedConnection required qRegisterMetaType()
+	connect(socket, &QTcpSocket::disconnected, this, &QTarantool::on_SocketDisconnected);
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 15, 0)
-	connect(socket, &QTcpSocket::errorOccurred, this, &QTarantool::onSocketError);
+	connect(socket, &QTcpSocket::errorOccurred, this, &QTarantool::on_SocketError);
 #else
-	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onSocketError(QAbstractSocket::SocketError)));
+	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(on_SocketError(QAbstractSocket::SocketError)));
 #endif
 }
 /****************************************************************************************
@@ -37,8 +37,22 @@ QUrl url(uri);
 	disconnectServer();
 	socket->connectToHost(url.host(), url.port());
 
-	/* wait for connect & init */
-	waitFor(this, SIGNAL(signalConnected(bool)), TIMEOUT);
+	if(waitForSocketRead(TIMEOUT))
+	{
+	QByteArray baReply(socket->readAll());
+	QList slReply =baReply.split('\n');
+
+		if(baReply.size() == 128 && slReply.length() == 3) // Server 'greetings' exactly 128 bytes & must be 3 lines
+		{
+			version =slReply.at(0);
+			salt =QByteArray::fromBase64(slReply.at(1));
+			bInit =true;
+
+			emit signalConnected(isConnected() & bInit);
+		}
+		else
+			disconnectServer();
+	}
 
 return(isConnected() & bInit);
 }
@@ -49,7 +63,7 @@ void
 QTarantool::disconnectServer()
 {
 	if(isConnected())
-		socket->disconnectFromHost();
+		socket->close();
 
 	UserName ="";
 }
@@ -89,13 +103,13 @@ QByteArray request(sizeof(HDR_DATA_SIZE), Qt::Uninitialized); // reserve HDR_DAT
 	((HDR_DATA_SIZE *)request.data())->data_size =(request.size() - sizeof(HDR_DATA_SIZE));
 
 QElapsedTimer tmr;
+qint64 nsec;
 
 	tmr.start();
 
-	if(send(request))
-		waitFor(socket, SIGNAL(readyRead()), TIMEOUT);
+	send(request);
 
-qint64 nsec =tmr.nsecsElapsed();
+	nsec =tmr.nsecsElapsed();
 
 	if(tmr.hasExpired(TIMEOUT)) // TIMEOUT in mSec (miliseconds)
 		return(0);
@@ -238,7 +252,8 @@ QTarantool::getUserName()
 return("");
 }
 /****************************************************************************************
- *
+ * To pay ATTENTION for NON-secure networks!
+ * The new User's password will be sent to the server in PLAIN text, in MsgPack format.
 ****************************************************************************************/
 bool
 QTarantool::createUser(const QString &userName, const QString &userPassword)
@@ -717,13 +732,12 @@ QByteArray request(sizeof(HDR_DATA_SIZE), Qt::Uninitialized);
 	((HDR_DATA_SIZE *)request.data())->mp_hdr =0xCE; // CONST MP_UINT
 	((HDR_DATA_SIZE *)request.data())->data_size =(request.size() - sizeof(HDR_DATA_SIZE));
 
-	if(send(request))
-		waitFor(socket, SIGNAL(readyRead()), TIMEOUT);
+	send(request);
 
 	Reply =MsgPack::unpack(socket->readAll());
 
 	if(!Reply.IsValid)
-		setLastError({0, "Malformed server response."});
+		setLastError({-1, "Malformed server response."});
 	else
 	if(Reply.Header[IPROTO_STATUS] != IPROTO_OK) // if ERROR return
 	{
@@ -740,23 +754,25 @@ return(Reply);
 qint64
 QTarantool::send(const QByteArray &data)
 {
-	if(isConnected())
-		return(socket->write(data));
+qint64 qwSended =0;
 
-return(0);
+    if(isConnected() && (qwSended =socket->write(data)) && socket->waitForBytesWritten(TIMEOUT))
+		waitForSocketRead(TIMEOUT);
+
+return(qwSended);
 }
 /****************************************************************************************
  * Socket events handlers
 ****************************************************************************************/
 void
-QTarantool::onSocketConnected() // ignore
+QTarantool::on_SocketConnected() // ignore
 {
 	qDebug("Connected to server. [%d]", isConnected());
 	syncId =0;
 }
 //----------------------------------------------------------------------------------------
 void
-QTarantool::onSocketDisconnected()
+QTarantool::on_SocketDisconnected()
 {
 	qDebug("Disconnected server.");
 	bInit =false;
@@ -764,51 +780,30 @@ QTarantool::onSocketDisconnected()
 }
 //----------------------------------------------------------------------------------------
 void
-QTarantool::onSocketError(QAbstractSocket::SocketError error)
+QTarantool::on_SocketError(QAbstractSocket::SocketError error)
 {
-	setLastError({0, QString("Socket error [%1].").arg(error)});
+	setLastError({-1, QString("Socket error [%1].").arg(error)});
 	emit signalConnected(isConnected() & bInit);
-}
-//----------------------------------------------------------------------------------------
-void
-QTarantool::readyRead()
-{
-	//qDebug("Received[%lld]", socket->bytesAvailable());
-
-	if(!bInit) // need init
-	{
-	QByteArray baReply(socket->readAll());
-	QList slReply =baReply.split('\n');
-
-		if(baReply.size() == 128 && slReply.length() == 3) // Server 'greetings' exactly 128 bytes & must be 3 lines
-		{
-			version =slReply.at(0);
-			salt =QByteArray::fromBase64(slReply.at(1));
-			bInit =true;
-		}
-		else
-			disconnectServer();
-
-		emit signalConnected(isConnected() & bInit);
-
-	return;
-	}
-
-	//emit signalReceived(socket->readAll()); // ??
 }
 /****************************************************************************************
  * Wait signal for object in a single threaded application
  * [QT-NOTE]: Requires a <QApplication> instance
 ****************************************************************************************/
-void
+bool
 QTarantool::waitFor(const QObject *object, const char *signal, int timeout)
 {
 QEventLoop loop;
+bool bOK =true;
 
-	if(timeout)
-		QTimer::singleShot(timeout, &loop, &QEventLoop::quit);
+    if(timeout)
+		QTimer::singleShot(timeout, &loop, [&] () {
+			bOK =false;
+			loop.quit();
+		});
 
 	loop.connect(object, signal, &loop, SLOT(quit()), Qt::QueuedConnection);
 	loop.exec();
+
+return(bOK);
 }
 

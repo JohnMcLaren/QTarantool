@@ -176,7 +176,7 @@ QVariantModel::data(const QVariant &node, const uint position, OUT QVariant * co
 		else
 		if(isMapType(node)) // Map
 		{
-		const auto &it=(reinterpret_cast<const QVariantMap &>(node).begin() + position);
+		const auto &it=std::next(reinterpret_cast<const QVariantMap &>(node).begin(), position);
 
 			if(pKey)
 				if(isMap(node))
@@ -184,12 +184,12 @@ QVariantModel::data(const QVariant &node, const uint position, OUT QVariant * co
 				else
 					*pKey =reinterpret_cast<const QUIntMap::ConstIterator &>(it).key();
 
-		return(it.value());
+		return(*it);
 		}
 		else
 		if(isHashType(node)) // Hash
 		{
-		const auto &it =(reinterpret_cast<const QVariantHash &>(node).begin() + position);
+		const auto &it =std::next(reinterpret_cast<const QVariantHash &>(node).begin(), position);
 
 			if(pKey)
 				if(isHash(node))
@@ -197,7 +197,7 @@ QVariantModel::data(const QVariant &node, const uint position, OUT QVariant * co
 				else
 					*pKey =reinterpret_cast<const QUIntHash::ConstIterator &>(it).key();
 
-		return(it.value());
+		return(*it);
 		}
 
 return(NULLVAR);
@@ -319,7 +319,7 @@ return(setData(index, value));
  * The method only changes the data by the existing index (the root index '{}' always exists).
 ******************************************************************************************/
 bool
-QVariantModel::setData(const QVariantModelIndex &index, const QVariant value)
+QVariantModel::setData(const QVariantModelIndex &index, const QVariant &value)
 {
 QVariant key, &nodeValue =const_cast<QVariant &>(data(index, &key, false)); // get reference to data value of node
 
@@ -534,7 +534,7 @@ QVariantModel::createNodeIndex(QVariantModelIndex &index, const QVariant &data, 
 	if(isNode(data)) // all allowable types of Nodes.
 	{
 		while(position < Nodes.size() && index > Nodes[position].index) // skip garbage nodes if exist
-			position++;
+			++position;
 
 		// There, position <= Nodes.size() AND index <= Nodes[position].index.
 		if(position == Nodes.size() || index < Nodes[position].index) // new position OR
@@ -543,64 +543,64 @@ QVariantModel::createNodeIndex(QVariantModelIndex &index, const QVariant &data, 
 			Nodes[position].ExistenceTag =OldNodeTag; // Node already exists.
 
 		pParentNodeIndex = &Nodes[position];
-		position++;
+		++position;
 
 		index.push_back({}); // create last key node index
 
 		if(isList(data)) // VariantList [NOTE] QList<any> cannot contain Nodes
 		{
-		auto list =reinterpret_cast<const QVariantList &>(data);
+		const auto &list =reinterpret_cast<const QVariantList &>(data);
 
 			const_cast<NodeIndex *>(pParentNodeIndex)->IsList =true;
 
-			for(auto it =list.cbegin(); it != list.cend(); it++)
+			for(auto it =list.cbegin(); it != list.cend(); ++it)
 			{
 				index[index.size() - 1] =std::distance(list.cbegin(), it); // set last key node index
-				position =createNodeIndex(index, it.i->t(), position, pParentNodeIndex);
+				position =createNodeIndex(index, *it, position, pParentNodeIndex);
 			}
 		}
 		else // Map & UIntMap
 		if(isMap(data))
 		{
-		auto map =reinterpret_cast<const QVariantMap &>(data);
+		const auto &map =reinterpret_cast<const QVariantMap &>(data);
 
-			for(auto it =map.cbegin(); it != map.cend(); it++)
+			for(auto it =map.cbegin(); it != map.cend(); ++it)
 			{
 				index[index.size() - 1] =it.key();
-				position =createNodeIndex(index, it.value(), position, pParentNodeIndex);
+				position =createNodeIndex(index, *it, position, pParentNodeIndex);
 			}
 		}
 		else
 		if(isUIntMap(data))
 		{
-		auto umap =reinterpret_cast<const QUIntMap &>(data);
+		const auto &umap =reinterpret_cast<const QUIntMap &>(data);
 
-			for(auto it =umap.cbegin(); it != umap.cend(); it++)
+			for(auto it =umap.cbegin(); it != umap.cend(); ++it)
 			{
 				index[index.size() - 1] =it.key();
-				position =createNodeIndex(index, it.value(), position, pParentNodeIndex);
+				position =createNodeIndex(index, *it, position, pParentNodeIndex);
 			}
 		}
 		else // Hash & UIntHash
 		if(isHash(data))
 		{
-		auto hash =reinterpret_cast<const QVariantHash &>(data);
+		const auto &hash =reinterpret_cast<const QVariantHash &>(data);
 
-			for(auto it =hash.cbegin(); it != hash.cend(); it++)
+			for(auto it =hash.cbegin(); it != hash.cend(); ++it)
 			{
 				index[index.size() - 1] =it.key();
-				position =createNodeIndex(index, it.value(), position, pParentNodeIndex);
+				position =createNodeIndex(index, *it, position, pParentNodeIndex);
 			}
 		}
 		else
 		if(isUIntHash(data))
 		{
-		auto uhash =reinterpret_cast<const QUIntHash &>(data);
+		const auto &uhash =reinterpret_cast<const QUIntHash &>(data);
 
-			for(auto it =uhash.cbegin(); it != uhash.cend(); it++)
+			for(auto it =uhash.cbegin(); it != uhash.cend(); ++it)
 			{
 				index[index.size() - 1] =it.key();
-				position =createNodeIndex(index, it.value(), position, pParentNodeIndex);
+				position =createNodeIndex(index, *it, position, pParentNodeIndex);
 			}
 		}
 
@@ -626,7 +626,7 @@ int position =getNewNodeIndexPosition(index, &parent);
 			while(it != Nodes.end() && it->index.size() >= index.size())
 			{
 				it->index[index.size() - 1] =(it->index[index.size() - 1].toInt() + 1); // fix current list indexes for 1 inserted node
-				it++;
+				++it;
 			}
 		}
 		else
@@ -659,7 +659,7 @@ const auto &begin =std::lower_bound(Nodes.begin(),
 
 		// find end of delete index of node
 		while(++it != Nodes.end() && index.isParentOf(it->index))
-			childs++;
+			++childs;
 
 		// delete all 'NodeIndex' where 'index' is parent node (include 'index')
 		it =Nodes.erase(begin, it); // squeeze() ??
@@ -668,7 +668,7 @@ const auto &begin =std::lower_bound(Nodes.begin(),
 			while(it != Nodes.end() && it->index.size() > LastKeyPosition)
 			{
 				it->index[LastKeyPosition] =(it->index[LastKeyPosition].toInt() - 1); // fix current list indexes for 1 deleted node
-				it++;
+				++it;
 			}
 
 	return(childs + 1);
@@ -733,7 +733,7 @@ QModelIndex topLeft; // full update view by default
 						removeNodeIndex(Nodes[position].index, false);
 					}
 					else
-						position++;
+						++position;
 			}
 			else // Full replacement content of the root node.
 			{
@@ -935,7 +935,7 @@ QListPoint:
 QListPointF:
 	return(reinterpret_cast<const QList<QPointF> &>(list)[index]);
 QListRegExp:
-	return(reinterpret_cast<const QList<QRegExp> &>(list)[index]);
+	return(reinterpret_cast<const QList<QREGEXP> &>(list)[index]);
 QListVariantHash:
 	return(reinterpret_cast<const QList<QVariantHash> &>(list)[index]);
 QListEasingCurve:
@@ -1078,7 +1078,7 @@ uint c =1;
 	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QLineF>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QLineF>>() : &&QListLineF;
 	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QPoint>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QPoint>>() : &&QListPoint;
 	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QPointF>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QPointF>>() : &&QListPointF;
-	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QRegExp>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QRegExp>>() : &&QListRegExp;
+	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QREGEXP>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QREGEXP>>() : &&QListRegExp;
 	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QVariantHash>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QVariantHash>>() : &&QListVariantHash;
 	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QEasingCurve>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QEasingCurve>>() : &&QListEasingCurve;
 	GetList$JumpTable[c ? c++ : qMetaTypeId<QList<QUuid>>() - MinUserTypeId] = c ? (void *)qMetaTypeId<QList<QUuid>>() : &&QListUuid;
@@ -1137,7 +1137,7 @@ uint c =1;
 	if(c) // 1 pass
 	{
 		// search min type Id
-		for(c =1, MinUserTypeId =(-1); c < (QMetaType::HighestInternalId + 1); c++)
+		for(c =1, MinUserTypeId =(-1); c < (QMetaType::HighestInternalId + 1); ++c)
 			if(*(uint *)&GetList$JumpTable[c] && *(uint *)&GetList$JumpTable[c] < MinUserTypeId)
 				MinUserTypeId = *(uint *)&GetList$JumpTable[c];
 
@@ -1148,7 +1148,7 @@ uint c =1;
 		}
 
 		// init array default address
-		for(c =0; c < (QMetaType::HighestInternalId + 1); c++)
+		for(c =0; c < (QMetaType::HighestInternalId + 1); ++c)
 			GetList$JumpTable[c] = &&Unknown;
 
 		goto init; // OK. pass 2
@@ -1255,7 +1255,7 @@ QListPointF:
 	reinterpret_cast<QList<QPointF> &>(list)[index] =value.toPointF();
 	return(true);
 QListRegExp:
-	reinterpret_cast<QList<QRegExp> &>(list)[index] =value.toRegExp();
+	reinterpret_cast<QList<QREGEXP> &>(list)[index] =value.value<QREGEXP>();
 	return(true);
 QListVariantHash:
 	reinterpret_cast<QList<QVariantHash> &>(list)[index] =value.toHash();
@@ -1448,7 +1448,7 @@ init:
 	SetList$JumpTable[qMetaTypeId<QList<QLineF>>() - MinUserTypeId] = &&QListLineF;
 	SetList$JumpTable[qMetaTypeId<QList<QPoint>>() - MinUserTypeId] = &&QListPoint;
 	SetList$JumpTable[qMetaTypeId<QList<QPointF>>() - MinUserTypeId] = &&QListPointF;
-	SetList$JumpTable[qMetaTypeId<QList<QRegExp>>() - MinUserTypeId] = &&QListRegExp;
+	SetList$JumpTable[qMetaTypeId<QList<QREGEXP>>() - MinUserTypeId] = &&QListRegExp;
 	SetList$JumpTable[qMetaTypeId<QList<QVariantHash>>() - MinUserTypeId] = &&QListVariantHash;
 	SetList$JumpTable[qMetaTypeId<QList<QEasingCurve>>() - MinUserTypeId] = &&QListEasingCurve;
 	SetList$JumpTable[qMetaTypeId<QList<QUuid>>() - MinUserTypeId] = &&QListUuid;
@@ -1605,7 +1605,7 @@ QListPointF:
 	reinterpret_cast<QList<QPointF> &>(list).removeAt(index);
 	return(true);
 QListRegExp:
-	reinterpret_cast<QList<QRegExp> &>(list).removeAt(index);
+	reinterpret_cast<QList<QREGEXP> &>(list).removeAt(index);
 	return(true);
 QListVariantHash:
 	reinterpret_cast<QList<QVariantHash> &>(list).removeAt(index);
@@ -1798,7 +1798,7 @@ init:
 	RemoveList$JumpTable[qMetaTypeId<QList<QLineF>>() - MinUserTypeId] = &&QListLineF;
 	RemoveList$JumpTable[qMetaTypeId<QList<QPoint>>() - MinUserTypeId] = &&QListPoint;
 	RemoveList$JumpTable[qMetaTypeId<QList<QPointF>>() - MinUserTypeId] = &&QListPointF;
-	RemoveList$JumpTable[qMetaTypeId<QList<QRegExp>>() - MinUserTypeId] = &&QListRegExp;
+	RemoveList$JumpTable[qMetaTypeId<QList<QREGEXP>>() - MinUserTypeId] = &&QListRegExp;
 	RemoveList$JumpTable[qMetaTypeId<QList<QVariantHash>>() - MinUserTypeId] = &&QListVariantHash;
 	RemoveList$JumpTable[qMetaTypeId<QList<QEasingCurve>>() - MinUserTypeId] = &&QListEasingCurve;
 	RemoveList$JumpTable[qMetaTypeId<QList<QUuid>>() - MinUserTypeId] = &&QListUuid;
@@ -1955,7 +1955,7 @@ QListPointF:
 	reinterpret_cast<QList<QPointF> &>(list).insert(index, value.toPointF());
 	return(true);
 QListRegExp:
-	reinterpret_cast<QList<QRegExp> &>(list).insert(index, value.toRegExp());
+	reinterpret_cast<QList<QREGEXP> &>(list).insert(index, value.value<QREGEXP>());
 	return(true);
 QListVariantHash:
 	reinterpret_cast<QList<QVariantHash> &>(list).insert(index, value.toHash());
@@ -2148,7 +2148,7 @@ init:
 	InsertList$JumpTable[qMetaTypeId<QList<QLineF>>() - MinUserTypeId] = &&QListLineF;
 	InsertList$JumpTable[qMetaTypeId<QList<QPoint>>() - MinUserTypeId] = &&QListPoint;
 	InsertList$JumpTable[qMetaTypeId<QList<QPointF>>() - MinUserTypeId] = &&QListPointF;
-	InsertList$JumpTable[qMetaTypeId<QList<QRegExp>>() - MinUserTypeId] = &&QListRegExp;
+	InsertList$JumpTable[qMetaTypeId<QList<QREGEXP>>() - MinUserTypeId] = &&QListRegExp;
 	InsertList$JumpTable[qMetaTypeId<QList<QVariantHash>>() - MinUserTypeId] = &&QListVariantHash;
 	InsertList$JumpTable[qMetaTypeId<QList<QEasingCurve>>() - MinUserTypeId] = &&QListEasingCurve;
 	InsertList$JumpTable[qMetaTypeId<QList<QUuid>>() - MinUserTypeId] = &&QListUuid;

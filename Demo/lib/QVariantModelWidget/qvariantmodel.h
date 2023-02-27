@@ -23,6 +23,11 @@ Q_DECLARE_METATYPE(QUIntHash)
 
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	#define QREGEXP QRegExp
+#else
+	#warning "This code is not compatible with Qt6 framework."
+#endif
 /************************************************************************************************
  *									Check for QVariant node type
  ***********************************************************************************************/
@@ -154,10 +159,10 @@ public:
 			if(comp == index.end())
 				break; // end comparsion
 			else
-			if(key != comp.i->t()) // compare keys for equal
+			if(key != *comp) // compare keys for equal
 				return(false);
 			else
-				comp++;
+				++comp;
 
 	return(true); // The start of 'this' index is exactly the same as the 'index'.
 	}
@@ -183,19 +188,19 @@ public:
 			if(comp == index.end())
 				return(false); // 'this' is longer than 'index'
 			else
-			if(key != comp.i->t()) // compare keys if it are not equal
+			if(key != *comp) // compare keys if it are not equal
 				if(isString(key))// [QT-BUG] compares QVariant(QString) are case INSENSITIVE ! (i.e. "A" > "_")
-					if(isInteger(comp.i->t()))
+					if(isInteger(*comp))
 						return(false); // The integer key is lower than the string key.
 					else
-						return(reinterpret_cast<const QString &>(key) < reinterpret_cast<const QString &>(comp.i->t()));
+						return(reinterpret_cast<const QString &>(key) < reinterpret_cast<const QString &>(*comp));
 				else
-					if(isString(comp.i->t()))
+					if(isString(*comp))
 						return(true); // The string key is greater than the integer key.
 					else
-						return(key < comp.i->t());
+						return(key.toULongLong() < (*comp).toULongLong());
 			else
-				comp++; // keys equal - go to next key
+				++comp; // keys equal - go to next key
 
 	return(comp == index.end() ? false : true); // 'this' equal OR is shorter(less) than 'index'
 	}
@@ -214,7 +219,7 @@ private:
 	inline static quint64
 	_indexOfKey(const T_Map &container, const T_Key &key)
 	{
-	const auto it =container.constFind(key);
+	const auto &it =container.constFind(key);
 
 		if(it != container.constEnd())
 			return(std::distance(container.constBegin(), it));
@@ -227,7 +232,7 @@ private:
 	_keyOfIndex(const T_Map &container, const quint64 index, OUT QVariant &key)
 	{
 		if(index < lengthNode(reinterpret_cast<const QVariant &>(container)))
-			key =(container.constBegin() + index).key();
+			key =std::next(container.constBegin(), index).key();
 	}
 
 } QVMI;
@@ -267,7 +272,7 @@ public:
 	}
 	// Set new data value by VarModelIndex
 	bool
-	setData(const QVariantModelIndex &index, const QVariant value);
+	setData(const QVariantModelIndex &index, const QVariant &value);
 	// Inserts a new key/node with data.
 	bool
 	insertData(const QVariantModelIndex &index, const QVariant &value);
@@ -332,8 +337,8 @@ public:
 	{
 		qDebug() << "TOTAL NODEINDEXES:" << Nodes.size();
 
-		for(int c =0; c < Nodes.size(); c++)
-			qDebug("%d(0x%lx) [%ls] >>> (parent: 0x%lx) ExistenceTag: %u IsList: %d", c, &Nodes[c],
+		for(int c =0; c < Nodes.size(); ++c)
+			qDebug("%d(0x%llx) [%ls] >>> (parent: 0x%llx) ExistenceTag: %u IsList: %d", c, &Nodes[c],
 																						Nodes[c].index.text().utf16(),
 																						Nodes[c].parent,
 																						Nodes[c].ExistenceTag,
@@ -350,7 +355,7 @@ public:
 	void
 	debugPrintModelIndexList(const QModelIndexList &list)
 	{
-		for(int c =0; c < list.size(); c++)
+		for(int c =0; c < list.size(); ++c)
 			qDebug("%d - %ls", c, debugPrintModelIndex(list[c]).utf16());
 	}
 	void
@@ -424,7 +429,7 @@ private:
 	inline void
 	updateView(const QVariantModelIndex &index, const NodeIndexAction action)
 	{
-		UpdateEventID++;
+		++UpdateEventID;
 		changeNodeIndex(index, action);
 	}
 	// Converts VariantModelIndex to ModelIndex(-es)
@@ -502,7 +507,7 @@ private:
 									  index,
 									  [](const NodeIndex &_node, const QVariantModelIndex &_index) { return(_node.index < _index); });
 
-	return((it != Nodes.end() && it->index == index) ? &it.i->t() : nullptr);
+	return((it != Nodes.end() && it->index == index) ? &(*it) : nullptr);
 	}
 	// Find address NodeIndex in Nodes by position in parent node (i.e. returns a child NodeIndex)
 	inline const NodeIndex *
@@ -554,7 +559,7 @@ private:
 	{
 	const auto it =node.constFind(key);
 
-	return(it != node.constEnd() ? const_cast<QVariant &>(it.value()) : const_cast<QVariant &>(NULLVAR) ={});
+	return(it != node.constEnd() ? const_cast<QVariant &>(*it) : const_cast<QVariant &>(NULLVAR) ={});
 	}
 //************************************************************************ Hardcore stuff
 	// Get data by index from list of <any> list type
