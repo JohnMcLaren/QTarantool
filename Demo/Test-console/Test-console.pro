@@ -9,15 +9,15 @@ CONFIG -= app_bundle
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        ../../src/qmsgpack/msgpack.cpp \
-        ../../src/qmsgpack/msgpackcommon.cpp \
-        ../../src/qmsgpack/msgpackstream.cpp \
-        ../../src/qmsgpack/private/pack_p.cpp \
-        ../../src/qmsgpack/private/qt_types_p.cpp \
-        ../../src/qmsgpack/private/unpack_p.cpp \
-        ../../src/qmsgpack/stream/geometry.cpp \
-        ../../src/qmsgpack/stream/location.cpp \
-        ../../src/qmsgpack/stream/time.cpp \
+        ../../src/lib/qmsgpack/msgpack.cpp \
+		../../src/lib/qmsgpack/msgpackcommon.cpp \
+		../../src/lib/qmsgpack/msgpackstream.cpp \
+		../../src/lib/qmsgpack/private/pack_p.cpp \
+		../../src/lib/qmsgpack/private/qt_types_p.cpp \
+		../../src/lib/qmsgpack/private/unpack_p.cpp \
+		../../src/lib/qmsgpack/stream/geometry.cpp \
+		../../src/lib/qmsgpack/stream/location.cpp \
+		../../src/lib/qmsgpack/stream/time.cpp \
         ../../src/qtarantool.cpp \
         main.cpp
 
@@ -32,17 +32,17 @@ HEADERS += \
     ../../src/include/ExtMetaTypes.h \
     ../../src/include/iproto_constants.h \
     ../../src/include/util.h \
-    ../../src/qmsgpack/endianhelper.h \
-    ../../src/qmsgpack/msgpack.h \
-    ../../src/qmsgpack/msgpack_export.h \
-    ../../src/qmsgpack/msgpackcommon.h \
-    ../../src/qmsgpack/msgpackstream.h \
-    ../../src/qmsgpack/private/pack_p.h \
-    ../../src/qmsgpack/private/qt_types_p.h \
-    ../../src/qmsgpack/private/unpack_p.h \
-    ../../src/qmsgpack/stream/geometry.h \
-    ../../src/qmsgpack/stream/location.h \
-    ../../src/qmsgpack/stream/time.h \
+	../../src/lib/qmsgpack/endianhelper.h \
+	../../src/lib/qmsgpack/msgpack.h \
+	../../src/lib/qmsgpack/msgpack_export.h \
+	../../src/lib/qmsgpack/msgpackcommon.h \
+	../../src/lib/qmsgpack/msgpackstream.h \
+	../../src/lib/qmsgpack/private/pack_p.h \
+	../../src/lib/qmsgpack/private/qt_types_p.h \
+	../../src/lib/qmsgpack/private/unpack_p.h \
+	../../src/lib/qmsgpack/stream/geometry.h \
+	../../src/lib/qmsgpack/stream/location.h \
+	../../src/lib/qmsgpack/stream/time.h \
     ../../src/qtarantool.h
 
 # Set build out directory

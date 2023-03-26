@@ -9,7 +9,7 @@
 #endif
 
 #include "msgpack_export.h"
-#include "../include/ExtMetaTypes.h"
+#include "../../include/ExtMetaTypes.h"
 
 #define MSGPACK_MAJOR 0
 #define MSGPACK_MINOR 1

@@ -21,7 +21,7 @@
 #include <QCryptographicHash>
 #include <QDebug>
 //#include "msgpuck/msgpuck.h"
-#include "qmsgpack/msgpack.h"
+#include "lib/qmsgpack/msgpack.h"
 
 namespace QTNT
 {
