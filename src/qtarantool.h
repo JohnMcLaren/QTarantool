@@ -565,7 +565,11 @@ private:
 private slots:
 	void on_SocketConnected();
 	void on_SocketDisconnected();
-	void on_SocketError(QAbstractSocket::SocketError error);
+	void on_SocketError(QAbstractSocket::SocketError error) {
+
+		setLastError({-1, QString("Socket error [%1].").arg(error)});
+		emit signalConnected(isConnected() & bInit);
+	}
 
 signals:
 	void signalConnected(const bool bConnected);

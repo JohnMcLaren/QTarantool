@@ -778,13 +778,6 @@ QTarantool::on_SocketDisconnected()
 	bInit =false;
 	emit signalConnected(false);
 }
-//----------------------------------------------------------------------------------------
-void
-QTarantool::on_SocketError(QAbstractSocket::SocketError error)
-{
-	setLastError({-1, QString("Socket error [%1].").arg(error)});
-	emit signalConnected(isConnected() & bInit);
-}
 /****************************************************************************************
  * Wait signal for object in a single threaded application
  * [QT-NOTE]: Requires a <QApplication> instance
