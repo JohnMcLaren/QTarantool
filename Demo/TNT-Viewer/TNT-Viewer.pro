@@ -46,7 +46,8 @@ HEADERS += \
     mainwindow.h \
 	../lib/QVariantModelWidget/qvariantmodel.h \
 	../lib/QVariantModelWidget/qvarianttablewidget.h \
-	../lib/QVariantModelWidget/qvarianttreewidget.h
+	../lib/QVariantModelWidget/qvarianttreewidget.h \
+	../../src/lib/QUnSocket/qunsocket.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

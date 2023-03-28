@@ -12,7 +12,6 @@
 #include <QTimer>
 #include <QElapsedTimer> // for Windows
 #include <QEventLoop>
-#include <QTcpSocket>
 #include <QThread>
 #include <QUrl>
 #include <QJsonObject>
@@ -22,6 +21,7 @@
 #include <QDebug>
 //#include "msgpuck/msgpuck.h"
 #include "lib/qmsgpack/msgpack.h"
+#include "lib/QUnSocket/qunsocket.h"
 
 namespace QTNT
 {
@@ -399,7 +399,7 @@ public:
 	void
 	disconnectServer();
 	inline bool
-	isConnected() { return(socket->state() == QAbstractSocket::ConnectedState); }
+	isConnected() { return(socket->isConnected()); }
 	qint64
 	ping();
 	const QVariantMap &
@@ -504,7 +504,7 @@ public:
 	int exec() =delete; // hide parent <exec> method
 
 private:
-	QAbstractSocket *socket;
+	QUnSocket *socket;
 	QString version; // server version
 	QByteArray salt; // session salt
 	bool bInit =false;
@@ -525,23 +525,6 @@ private:
 		lasterror =msg;
 		emit error(msg);
 	}
-	/***************************************************************
-	* [QT-NOTE]
-	* waitForReadyRead(...) - This function may fail randomly on Windows.
-	* Consider using the event loop and the readyRead() signal
-	* if your software will run on Windows.
-	* [Win-QT-BUG] https://bugreports.qt.io/browse/QTBUG-24451
-	***************************************************************/
-	inline bool
-	waitForSocketRead(int timeout) {
-	#if !defined(Q_OS_WIN) /* Linux & Co */
-		return(socket->waitForReadyRead(timeout));
-	#else				/* Windows */
-		return(waitFor(socket, SIGNAL(readyRead()), timeout));
-	#endif
-	}
-	static bool
-	waitFor(const QObject *object, const char *signal, int timeout);
 
 #pragma pack(1)
 
@@ -565,7 +548,7 @@ private:
 private slots:
 	void on_SocketConnected();
 	void on_SocketDisconnected();
-	void on_SocketError(QAbstractSocket::SocketError error) {
+	void on_SocketError(QUnSocket::SocketError error) {
 
 		setLastError({-1, QString("Socket error [%1].").arg(error)});
 		emit signalConnected(isConnected() & bInit);

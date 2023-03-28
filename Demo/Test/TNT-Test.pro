@@ -22,7 +22,7 @@ SOURCES += \
         main.cpp
 
 HEADERS += \
-    ../../src/lib/qmsgpack/ExtMetaTypes.h \
+    ../../src/include/ExtMetaTypes.h \
 	../../src/lib/qmsgpack/endianhelper.h \
 	../../src/lib/qmsgpack/msgpack.h \
 	../../src/lib/qmsgpack/msgpack_export.h \
@@ -34,9 +34,10 @@ HEADERS += \
 	../../src/lib/qmsgpack/stream/geometry.h \
 	../../src/lib/qmsgpack/stream/location.h \
 	../../src/lib/qmsgpack/stream/time.h \
+	../../src/lib/QUnSocket/qunsocket.h \
     ../../src/qtarantool.h \
-    ../../src/tarantool/iproto_constants.h \
-    ../../src/tarantool/util.h \
+	../../src/include/iproto_constants.h \
+	../../src/include/util.h \
     main.h
 
 # Default rules for deployment.

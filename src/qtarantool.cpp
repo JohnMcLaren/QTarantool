@@ -11,14 +11,14 @@ using namespace QTNT;
 //----------------------------------------------------------------------------------------
 QTarantool::QTarantool(QObject *parent) : QThread(parent)
 {
-	socket = new QTcpSocket(this);
+	socket = new QUnSocket(this);
 	//socket->setSocketOption(QTcpSocket::ReceiveBufferSizeSocketOption, 10000000);
 
-	connect(socket, &QTcpSocket::connected, this, &QTarantool::on_SocketConnected); // [QT-NOTE] Qt::QueuedConnection required qRegisterMetaType()
-	connect(socket, &QTcpSocket::disconnected, this, &QTarantool::on_SocketDisconnected);
+	connect(socket, &QUnSocket::connected, this, &QTarantool::on_SocketConnected); // [QT-NOTE] Qt::QueuedConnection required qRegisterMetaType()
+	connect(socket, &QUnSocket::disconnected, this, &QTarantool::on_SocketDisconnected);
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 15, 0)
-	connect(socket, &QTcpSocket::errorOccurred, this, &QTarantool::on_SocketError);
+	connect(socket, &QUnSocket::errorOccurred, this, &QTarantool::on_SocketError);
 #else
 	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(on_SocketError(QAbstractSocket::SocketError)));
 #endif
@@ -29,15 +29,10 @@ QTarantool::QTarantool(QObject *parent) : QThread(parent)
 bool
 QTarantool::connectToServer(const QString &uri)
 {
-QUrl url(uri);
-
-	if(!url.isValid() || url.host().isEmpty() || url.port() == (-1))
+	if(!socket->connectToServer(uri, TIMEOUT))
 		return(false);
 
-	disconnectServer();
-	socket->connectToHost(url.host(), url.port());
-
-	if(waitForSocketRead(TIMEOUT))
+	if(socket->waitForReadyRead(TIMEOUT))
 	{
 	QByteArray baReply(socket->readAll());
 	QList slReply =baReply.split('\n');
@@ -757,7 +752,7 @@ QTarantool::send(const QByteArray &data)
 qint64 qwSended =0;
 
     if(isConnected() && (qwSended =socket->write(data)) && socket->waitForBytesWritten(TIMEOUT))
-		waitForSocketRead(TIMEOUT);
+		socket->waitForReadyRead(TIMEOUT);
 
 return(qwSended);
 }
@@ -777,26 +772,5 @@ QTarantool::on_SocketDisconnected()
 	qDebug("Disconnected server.");
 	bInit =false;
 	emit signalConnected(false);
-}
-/****************************************************************************************
- * Wait signal for object in a single threaded application
- * [QT-NOTE]: Requires a <QApplication> instance
-****************************************************************************************/
-bool
-QTarantool::waitFor(const QObject *object, const char *signal, int timeout)
-{
-QEventLoop loop;
-bool bOK =true;
-
-    if(timeout)
-		QTimer::singleShot(timeout, &loop, [&] () {
-			bOK =false;
-			loop.quit();
-		});
-
-	loop.connect(object, signal, &loop, SLOT(quit()), Qt::QueuedConnection);
-	loop.exec();
-
-return(bOK);
 }
 

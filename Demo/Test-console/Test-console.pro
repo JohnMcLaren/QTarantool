@@ -1,5 +1,5 @@
 QT -= gui
-QT += network
+QT += network websockets
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
@@ -43,6 +43,7 @@ HEADERS += \
 	../../src/lib/qmsgpack/stream/geometry.h \
 	../../src/lib/qmsgpack/stream/location.h \
 	../../src/lib/qmsgpack/stream/time.h \
+	../../src/lib/QUnSocket/qunsocket.h \
     ../../src/qtarantool.h
 
 # Set build out directory

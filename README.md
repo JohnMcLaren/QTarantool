@@ -35,10 +35,16 @@ Connects to the `Tarantool` server.  It also generate `signalConnected( bool )` 
 ```c++
 #include "../../src/qtarantool.h"
 using namespace QTNT;
-
 QTarantool tnt;
 
-qDebug() << tnt.connectToServer("http://localhost:3301");
+/*** Standard TCP connection to the server ***/
+    qDebug() << tnt.connectToServer("http://localhost:3301");
+    // OR
+    qDebug() << tnt.connectToServer("tcp://localhost:3301");
+/*** UNIX-sockets connection ***/
+    qDebug() << tnt.connectToServer("unix:/tmp/tnt.sock");
+/*** Secure SSL/TLS TCP-connection (if it is supported by the server) ***/
+    qDebug() << tnt.connectToServer("https://localhost:3301");
 ```
 
 *   **disconnectServer**()
