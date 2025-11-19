@@ -1,3 +1,5 @@
+[![venture](https://img.shields.io/badge/Support_project-just_BUY_JML_Coin!-indigo?style=flat&logo=github)][venture-url]
+
 ## QTarantool
 `Qt/C++ connector` for [Tarantool][tarantool-src] database.
 Implemented the basic methods of managing the base and getting statistical information from the Tarantool server.
@@ -969,3 +971,4 @@ You can find test Qt-projects for `QTarantool` in the [Demo][demo-url] directory
 [tg-ru-url]: https://t.me/tarantoolru
 [demo-url]: https://github.com/JohnMcLaren/QTarantool/tree/main/Demo
 [demo-viewer-url]: https://github.com/JohnMcLaren/QTarantool/tree/main/Demo/TNT-Viewer
+[venture-url]: https://www.orca.so/?tokenIn=So11111111111111111111111111111111111111112&tokenOut=JMLCeiUjK64PMziqF8YiDNdky8PnrSG1waKY2LyQQKQ
