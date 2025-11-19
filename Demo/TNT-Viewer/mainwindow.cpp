@@ -198,7 +198,7 @@ MainWindow::updateSummary()
 const QVariantList listSpaces =tnt.spaces();
 const QUIntMap mapIndexes =tnt.indexes();
 QVariantMap mapSpaces;
-bool bSkipSystemSpaces =false;
+bool bSkipSystemSpaces =true;
 
 	if(!listSpaces.size())
 		return;
